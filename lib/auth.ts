@@ -44,7 +44,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         if (!user) throw new Error("Invalid credentails");
 
-        if (user.emailVerified == null) throw new Error("Email your email!");
+        if (user.emailVerified == null)
+          throw new Error("Verify your email to login!");
+
+        if (!user.password) {
+          throw new Error("Use Google/GitHub login");
+        }
 
         const isValid = await bcrypt.compare(password, user.password);
 

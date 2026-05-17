@@ -1,11 +1,18 @@
+"use server";
+
 import bcrypt from "bcrypt";
 import prisma from "@/lib/prisma";
 import crypto from "crypto";
 import { sendVerificationEmail } from "@/lib/mail";
 import { signIn, signOut } from "@/lib/auth";
 
+interface ActionState {
+  success: boolean;
+  msg: string;
+}
+
 // Register action
-export async function registerUser(formData: FormData) {
+export async function registerUser(prevState: ActionState, formData: FormData) {
   const name = formData.get("name") as string;
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
@@ -18,6 +25,7 @@ export async function registerUser(formData: FormData) {
   }
 
   try {
+    // check existing user
     const existingUser = await prisma.user.findUnique({ where: { email } });
 
     if (existingUser) {
@@ -27,8 +35,10 @@ export async function registerUser(formData: FormData) {
       };
     }
 
+    // hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    // create user
     await prisma.user.create({
       data: {
         name,
@@ -38,8 +48,22 @@ export async function registerUser(formData: FormData) {
       },
     });
 
+    // generate token
     const token = await crypto.randomBytes(32).toString("hex");
-    const verifyUrl = `${process.env.APP_URL}/verify-email?token=${token}`;
+
+    // save token
+    await prisma.verificationToken.create({
+      data: {
+        identifier: email,
+        token,
+        expires: new Date(Date.now() + 1000 * 60 * 60), // 1 hour
+      },
+    });
+
+    // verification url
+    const verifyUrl = `${process.env.APP_URL}/api/verify-email?token=${token}&email=${email}`;
+
+    // send email
     await sendVerificationEmail(email, verifyUrl);
 
     return {
@@ -50,21 +74,41 @@ export async function registerUser(formData: FormData) {
     console.log(err instanceof Error ? err.message : "Something went wrong");
     return {
       success: false,
-      msg: "Something went wrong! Please try again",
+      msg: "Registration failed. Please try again",
     };
   }
 }
 
 // Login action
-export async function loginUser(formData: FormData) {
+export async function loginUser(prevState: ActionState, formData: FormData) {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
 
-  await signIn("credentials", {
-    email,
-    password,
-    redirectTo: "/dashboard",
-  });
+  if (!email || !password) {
+    return {
+      success: false,
+      msg: "All credentials are required!",
+    };
+  }
+
+  try {
+    await signIn("credentials", {
+      email,
+      password,
+      redirectTo: "/dashboard",
+    });
+
+    return {
+      success: true,
+      msg: "Login successfully",
+    };
+  } catch (err) {
+    console.log(err instanceof Error ? err.message : "Something went wrong");
+    return {
+      success: false,
+      msg: "Login failed. Please try again!",
+    };
+  }
 }
 
 // logout action

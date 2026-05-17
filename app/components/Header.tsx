@@ -43,15 +43,7 @@ export default function Header() {
                 </Link>
               </NavigationMenuLink>
             </NavigationMenuItem>
-            <NavigationMenuItem>
-              {/* <NavigationMenuTrigger>Account</NavigationMenuTrigger>
-              <NavigationMenuContent>
-                <ul className="grid gap-3 p-4 w-[200px]">
-                  <li>Account Settings</li>
-                  <li>Profile</li>
-                </ul>
-              </NavigationMenuContent> */}
-            </NavigationMenuItem>
+            <NavigationMenuItem></NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
 
