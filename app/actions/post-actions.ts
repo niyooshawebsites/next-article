@@ -134,8 +134,25 @@ export async function editPost(
   prevState: ActionState,
   formData: FormData,
 ) {
-  const title = formData.get("title");
-  const imageUrl = formData.get("imageUrl");
+  const title = formData.get("title") as string;
+  const imageUrl = formData.get("imageUrl") as string;
+  const content = formData.get("content") as string;
+  const session = await auth();
+
+  if (!session?.user.id) {
+    return {
+      success: false,
+      msg: "Unauthorized",
+    };
+  }
+
+  if (!title || !content || !imageUrl) {
+    return {
+      success: false,
+      msg: "Please fill out all the fields",
+    };
+  }
+
   try {
     const article = await prisma.post.findUnique({
       where: {
@@ -156,6 +173,9 @@ export async function editPost(
       },
       data: {
         title,
+        imageUrl,
+        content,
+        authorId: session.user.id,
       },
     });
   } catch (err) {
