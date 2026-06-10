@@ -1,4 +1,4 @@
-import React from "react";
+"use client";
 import { togglePostStatus, deletePost } from "@/app/actions/post-actions";
 import { useRouter } from "next/navigation";
 
@@ -19,6 +19,7 @@ export default function PostActions({ postId, published }: PostActionProps) {
     await deletePost(postId);
     router.refresh();
   };
+
   return (
     <div className="flex gap-2">
       <button
@@ -29,7 +30,7 @@ export default function PostActions({ postId, published }: PostActionProps) {
       </button>
 
       <button
-        onClick={() => console.log("Published", postId)}
+        onClick={() => router.push(`/dashboard/article/edit/${postId}`)}
         className="px-2 py-1 text-blue-500 cursor-pointer"
       >
         Edit

@@ -25,9 +25,9 @@ export async function getPosts() {
 
 // creating articles
 export async function createPost(prevState: ActionState, formData: FormData) {
-  const title = formData.get("title") as string;
-  const content = formData.get("content") as string;
-  const imageUrl = formData.get("imageUrl") as string;
+  const title = (formData.get("title") as string)?.trim();
+  const imageUrl = (formData.get("imageUrl") as string)?.trim();
+  const content = (formData.get("content") as string)?.trim();
   const session = await auth();
 
   if (!session?.user?.id) {
@@ -115,6 +115,7 @@ export async function deletePost(postId: string) {
         id: postId,
       },
     });
+
     return {
       success: false,
       msg: "Article deleted successfully",
@@ -133,10 +134,10 @@ export async function editPost(
   postId: string,
   prevState: ActionState,
   formData: FormData,
-) {
-  const title = formData.get("title") as string;
-  const imageUrl = formData.get("imageUrl") as string;
-  const content = formData.get("content") as string;
+): Promise<ActionState> {
+  const title = (formData.get("title") as string)?.trim();
+  const imageUrl = (formData.get("imageUrl") as string)?.trim();
+  const content = (formData.get("content") as string)?.trim();
   const session = await auth();
 
   if (!session?.user.id) {
@@ -154,16 +155,23 @@ export async function editPost(
   }
 
   try {
-    const article = await prisma.post.findUnique({
+    const post = await prisma.post.findUnique({
       where: {
         id: postId,
       },
     });
 
-    if (!article) {
+    if (!post) {
       return {
         success: false,
         msg: "No article found",
+      };
+    }
+
+    if (post.authorId !== session.user.id) {
+      return {
+        success: false,
+        msg: "You are not authorized to edit this article",
       };
     }
 
@@ -178,6 +186,41 @@ export async function editPost(
         authorId: session.user.id,
       },
     });
+
+    return {
+      success: true,
+      msg: "Article updated successfully",
+    };
+  } catch (err) {
+    console.log(err);
+    return {
+      success: false,
+      msg: "Failed to edit article",
+    };
+  }
+}
+
+// find an article
+export async function findArticle(postId: string) {
+  try {
+    const post = await prisma.post.findUnique({
+      where: {
+        id: postId,
+      },
+    });
+
+    if (!post) {
+      return {
+        success: false,
+        msg: "No article found",
+      };
+    }
+
+    return {
+      success: true,
+      msg: "Article found successfully",
+      post,
+    };
   } catch (err) {
     console.log(err);
     return {
