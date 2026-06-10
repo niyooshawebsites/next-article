@@ -23,17 +23,34 @@ export default function CreateArticleForm() {
         <form action={formAction} className="space-y-4">
           <Field>
             <FieldLabel htmlFor="title">Article Title</FieldLabel>
-            <Input type="text" id="title" name="title" required />
+            <Input
+              type="text"
+              id="title"
+              name="title"
+              required
+              className="border-gray-300 focus:outline-none focus:ring-0 focus-visible:ring-0 focus:border-gray-500"
+            />
           </Field>
 
           <Field>
             <FieldLabel htmlFor="imageUrl">Image Url</FieldLabel>
-            <Input type="text" id="imageUrl" name="imageUrl" required />
+            <Input
+              type="text"
+              id="imageUrl"
+              name="imageUrl"
+              required
+              className="border-gray-300 focus:outline-none focus:ring-0 focus-visible:ring-0 focus:border-gray-500"
+            />
           </Field>
 
           <Field>
             <FieldLabel htmlFor="content">Article Content</FieldLabel>
-            <Textarea id="content" name="content" className="h-40" required />
+            <Textarea
+              id="content"
+              name="content"
+              required
+              className="h-96 border-gray-300 focus:outline-none focus:ring-0 focus-visible:ring-0 focus:border-gray-500"
+            />
           </Field>
 
           {state.success ? (

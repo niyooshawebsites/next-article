@@ -1,5 +1,6 @@
 "use client";
 import { ColumnDef } from "@tanstack/react-table";
+import PostActions from "./PostActions";
 
 export interface Post {
   id: string;
@@ -19,6 +20,15 @@ export const columns: ColumnDef<Post>[] = [
   {
     accessorKey: "createdAt",
     header: "Created At",
-    cell: ({ row }) => new Date(row.original.createdAt).toLocaleDateString(),
+    cell: ({ row }) =>
+      new Date(row.original.createdAt).toLocaleDateString("en-IN"),
+  },
+  {
+    id: "actions",
+    header: "Actions",
+    cell: ({ row }) => {
+      const post = row.original;
+      return <PostActions postId={post.id} published={post.published} />;
+    },
   },
 ];
