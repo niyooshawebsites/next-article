@@ -3,7 +3,8 @@ import { columns } from "./columns";
 import { PostTable } from "./post-table";
 
 export default async function AllPosts() {
-  const posts = await getPosts();
+  const res = await getPosts();
+  const posts = res.data;
 
   return (
     <div className="p-6">

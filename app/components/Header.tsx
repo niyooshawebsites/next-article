@@ -38,8 +38,11 @@ export default function Header() {
             </NavigationMenuItem>
             <NavigationMenuItem>
               <NavigationMenuLink asChild>
-                <Link href="/blogs" className="cursor-pointer hover:font-bold">
-                  Blogs
+                <Link
+                  href="/articles"
+                  className="cursor-pointer hover:font-bold"
+                >
+                  Articles
                 </Link>
               </NavigationMenuLink>
             </NavigationMenuItem>

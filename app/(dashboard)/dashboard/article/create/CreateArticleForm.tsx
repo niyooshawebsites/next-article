@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useActionState } from "react";
+import { useActionState, useState, useEffect } from "react";
 import { createPost } from "@/app/actions/post-actions";
 
 const initialState = {
@@ -14,6 +14,18 @@ const initialState = {
 
 export default function CreateArticleForm() {
   const [state, formAction] = useActionState(createPost, initialState);
+
+  const [imageUrl, setImageUrl] = useState("");
+  const [imageError, setImageError] = useState(false);
+
+  useEffect((): void => {
+    /* eslint-disable react-hooks/set-state-in-effect */
+    if (state.success) {
+      setImageUrl("");
+      setImageError(false);
+    }
+  }, [state.success]);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   return (
     <div className="flex justify-center items-center w-10/12 border border-gray-300 rounded-lg">
@@ -33,14 +45,38 @@ export default function CreateArticleForm() {
           </Field>
 
           <Field>
-            <FieldLabel htmlFor="imageUrl">Image Url</FieldLabel>
+            <FieldLabel htmlFor="imageUrl">Image URL</FieldLabel>
             <Input
               type="text"
               id="imageUrl"
               name="imageUrl"
+              value={imageUrl}
+              onChange={(e) => {
+                setImageUrl(e.target.value);
+                setImageError(false);
+              }}
               required
               className="border-gray-300 focus:outline-none focus:ring-0 focus-visible:ring-0 focus:border-gray-500"
             />
+
+            {imageUrl && (
+              <div className="mt-4">
+                <img
+                  src={imageUrl}
+                  alt="Article preview"
+                  width={300}
+                  className="rounded border"
+                  onError={() => setImageError(true)}
+                />
+              </div>
+            )}
+
+            {imageError && (
+              <p className="text-red-500 text-sm mt-2">
+                This image cannot be displayed. The URL may be invalid or the
+                remote server may block image loading.
+              </p>
+            )}
           </Field>
 
           <Field>
@@ -53,15 +89,19 @@ export default function CreateArticleForm() {
             />
           </Field>
 
-          {state.success ? (
-            <p className="text-success-500 text-sm">{state.msg}</p>
-          ) : (
-            <p className="text-danger-500 text-sm">{state.msg}</p>
+          {state.msg && (
+            <p
+              className={`text-sm ${
+                state.success ? "text-green-600" : "text-red-600"
+              }`}
+            >
+              {state.msg}
+            </p>
           )}
 
           <Button
             type="submit"
-            variant={"default"}
+            variant="default"
             className="cursor-pointer bg-gray-800 text-white hover:bg-gray-900"
           >
             Create

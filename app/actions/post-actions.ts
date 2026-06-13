@@ -17,9 +17,17 @@ export async function getPosts() {
       },
     });
 
-    return posts;
+    return {
+      success: false,
+      msg: "Failed to fetch articles",
+      data: posts,
+    };
   } catch (err) {
     console.log(err);
+    return {
+      success: false,
+      msg: "Failed to fetch articles",
+    };
   }
 }
 

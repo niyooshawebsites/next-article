@@ -8,7 +8,11 @@ export default async function EditArticle({
 }) {
   const { postId } = await params;
   const response = await findArticle(postId);
-  const article = response.post;
+  const article = response.post!;
+
+  if (!response?.post) {
+    return <div>Article not found</div>;
+  }
 
   return <EditAritcleForm postId={postId} article={article} />;
 }
