@@ -26,6 +26,7 @@ export async function fetchUsers() {
     return {
       success: false,
       msg: "Failed to fetch users",
+      data: [],
     };
   }
 }

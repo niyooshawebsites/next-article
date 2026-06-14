@@ -27,6 +27,7 @@ export async function getPosts() {
     return {
       success: false,
       msg: "Failed to fetch articles",
+      data: []
     };
   }
 }

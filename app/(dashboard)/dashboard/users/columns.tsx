@@ -6,6 +6,7 @@ interface User {
   id: string;
   email: string;
   createdAt: Date;
+  emailVerified: boolean;
 }
 
 export const columns: ColumnDef<User>[] = [
@@ -20,9 +21,13 @@ export const columns: ColumnDef<User>[] = [
   {
     accessorKey: "createdAt",
     header: "Created At",
-    cell: ({ row }) => {
-      new Date(row.original.createdAt).toLocaleString("en-IN");
-    },
+    cell: ({ row }) =>
+      new Date(row.original.createdAt).toLocaleDateString("en-IN"),
+  },
+  {
+    accessorKey: "emailVerified",
+    header: "Verified",
+    cell: ({ row }) => (row.original.emailVerified ? "Yes" : "No"),
   },
   {
     id: "actions",
