@@ -12,13 +12,13 @@ interface ActionState {
 export async function fetchPosts(
   page = 1,
   pageSize = 10,
-  role: number,
+  userRole: number,
   userId: string,
 ) {
   try {
     let posts;
     let totalPosts;
-    if (role === 1) {
+    if (userRole === 1) {
       posts = await prisma.post.findMany({
         orderBy: {
           createdAt: "desc",
@@ -48,8 +48,8 @@ export async function fetchPosts(
     }
 
     return {
-      success: false,
-      msg: "Failed to fetch articles",
+      success: true,
+      msg: "Successfully fetched articles",
       data: posts,
       pagination: {
         page,

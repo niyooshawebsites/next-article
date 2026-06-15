@@ -1,20 +1,16 @@
-import { fetchPosts } from "@/app/actions/post-actions";
 import { columns } from "./columns";
 import { PostTable } from "./post-table";
+import { auth } from "@/lib/auth";
 
 export default async function AllPosts() {
-  const res = await fetchPosts();
-  const posts = res.data;
+  const session = await auth();
+  const userRole = session!.user.role;
+  const userId = session!.user.id;
 
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">All Articles</h1>
-
-      {posts?.length ? (
-        <PostTable columns={columns} data={posts ?? []} />
-      ) : (
-        <span>No articles yet...</span>
-      )}
+      <PostTable columns={columns} userRole={userRole} userId={userId} />
     </div>
   );
 }

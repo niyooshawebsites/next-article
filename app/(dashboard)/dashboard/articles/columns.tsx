@@ -3,13 +3,6 @@ import { ColumnDef } from "@tanstack/react-table";
 import PostActions from "./PostActions";
 import type { Post } from "@/lib/generated/prisma/client";
 
-// export interface Post {
-//   id: string;
-//   title: string;
-//   published: boolean;
-//   createdAt: Date;
-// }
-
 export const columns: ColumnDef<Post>[] = [
   { accessorKey: "id", header: "ID" },
   { accessorKey: "title", header: "Title" },
