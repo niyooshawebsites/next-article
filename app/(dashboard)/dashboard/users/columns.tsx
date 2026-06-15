@@ -1,13 +1,7 @@
 "use client";
 import { ColumnDef } from "@tanstack/react-table";
 import UserActions from "./UserActions";
-
-interface User {
-  id: string;
-  email: string;
-  createdAt: Date;
-  emailVerified: boolean;
-}
+import type { User } from "@/lib/generated/prisma/client";
 
 export const columns: ColumnDef<User>[] = [
   {

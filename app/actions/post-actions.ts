@@ -9,25 +9,61 @@ interface ActionState {
 }
 
 // fetching all the articles
-export async function getPosts() {
+export async function fetchPosts(
+  page = 1,
+  pageSize = 10,
+  role: number,
+  userId: string,
+) {
   try {
-    const posts = await prisma.post.findMany({
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
+    let posts;
+    let totalPosts;
+    if (role === 1) {
+      posts = await prisma.post.findMany({
+        orderBy: {
+          createdAt: "desc",
+        },
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+      });
+
+      totalPosts = await prisma.post.count();
+    } else {
+      posts = await prisma.post.findMany({
+        where: {
+          authorId: userId,
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+      });
+
+      totalPosts = await prisma.post.count({
+        where: {
+          authorId: userId,
+        },
+      });
+    }
 
     return {
       success: false,
       msg: "Failed to fetch articles",
       data: posts,
+      pagination: {
+        page,
+        pageSize,
+        totalPosts,
+        totalPages: Math.ceil(totalPosts / pageSize),
+      },
     };
   } catch (err) {
     console.log(err);
     return {
       success: false,
       msg: "Failed to fetch articles",
-      data: []
+      data: [],
     };
   }
 }

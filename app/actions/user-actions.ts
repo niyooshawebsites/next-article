@@ -2,17 +2,27 @@
 
 import prisma from "@/lib/prisma";
 
-interface ActionState {
-  success: boolean;
-  msg: string;
-}
-
 // fetch all the users
-export async function fetchUsers() {
+export async function fetchUsers(page = 1, pageSize = 10) {
   try {
     const users = await prisma.user.findMany({
+      where: {
+        role: {
+          not: 1,
+        },
+      },
       orderBy: {
         createdAt: "desc",
+      },
+      skip: (page - 1) * pageSize,
+      take: pageSize, // take is same as mongodb limit(10)
+    });
+
+    const totalUsers = await prisma.user.count({
+      where: {
+        role: {
+          not: 1,
+        },
       },
     });
 
@@ -20,6 +30,12 @@ export async function fetchUsers() {
       success: true,
       msg: "Users fetched successfully",
       data: users,
+      pagination: {
+        page,
+        pageSize,
+        totalUsers,
+        totalPages: Math.ceil(totalUsers / pageSize),
+      },
     };
   } catch (err) {
     console.log(err);

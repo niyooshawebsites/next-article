@@ -1,9 +1,9 @@
-import { getPosts } from "@/app/actions/post-actions";
+import { fetchPosts } from "@/app/actions/post-actions";
 import { columns } from "./columns";
 import { PostTable } from "./post-table";
 
 export default async function AllPosts() {
-  const res = await getPosts();
+  const res = await fetchPosts();
   const posts = res.data;
 
   return (

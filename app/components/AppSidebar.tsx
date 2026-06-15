@@ -129,38 +129,42 @@ export default async function AppSidebar() {
         </SidebarGroup>
 
         {/* USERS */}
-        <SidebarGroup>
-          <SidebarGroupLabel>Users</SidebarGroupLabel>
+        {session?.user.role === 1 ? (
+          <SidebarGroup>
+            <SidebarGroupLabel>Users</SidebarGroupLabel>
 
-          <SidebarGroupContent>
-            <SidebarMenu>
-              <Collapsible>
-                <SidebarMenuItem>
-                  <CollapsibleTrigger className="w-full flex space-x-2 cursor-pointer hover:bg-gray-100 p-2 rounded-lg">
-                    <Users className="h-4 w-4" /> Users
-                    <ChevronDown className="ml-auto h-4 w-4 transition-transform group-data-[state=open]/collapsible:rotate-180" />
-                  </CollapsibleTrigger>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                <Collapsible>
+                  <SidebarMenuItem>
+                    <CollapsibleTrigger className="w-full flex space-x-2 cursor-pointer hover:bg-gray-100 p-2 rounded-lg">
+                      <Users className="h-4 w-4" /> Users
+                      <ChevronDown className="ml-auto h-4 w-4 transition-transform group-data-[state=open]/collapsible:rotate-180" />
+                    </CollapsibleTrigger>
 
-                  <CollapsibleContent>
-                    <SidebarMenu className="mt-1 space-y-1">
-                      {userItems.map((item) => (
-                        <SidebarMenuItem key={item.title}>
-                          <Link
-                            href={item.link}
-                            className="flex w-full items-center gap-2 px-2 py-1 pl-8 hover:bg-gray-100 p-2 rounded-lg"
-                          >
-                            <item.icon className="h-4 w-4" />
-                            <span>{item.title}</span>
-                          </Link>
-                        </SidebarMenuItem>
-                      ))}
-                    </SidebarMenu>
-                  </CollapsibleContent>
-                </SidebarMenuItem>
-              </Collapsible>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+                    <CollapsibleContent>
+                      <SidebarMenu className="mt-1 space-y-1">
+                        {userItems.map((item) => (
+                          <SidebarMenuItem key={item.title}>
+                            <Link
+                              href={item.link}
+                              className="flex w-full items-center gap-2 px-2 py-1 pl-8 hover:bg-gray-100 p-2 rounded-lg"
+                            >
+                              <item.icon className="h-4 w-4" />
+                              <span>{item.title}</span>
+                            </Link>
+                          </SidebarMenuItem>
+                        ))}
+                      </SidebarMenu>
+                    </CollapsibleContent>
+                  </SidebarMenuItem>
+                </Collapsible>
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        ) : (
+          <></>
+        )}
 
         {/* SETTINGS */}
         <SidebarGroup>
