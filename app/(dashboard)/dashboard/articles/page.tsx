@@ -1,4 +1,3 @@
-// import { columns } from "./columns";
 import { PostTable } from "./post-table";
 import { auth } from "@/lib/auth";
 

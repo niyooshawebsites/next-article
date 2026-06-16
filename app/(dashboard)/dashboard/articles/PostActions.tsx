@@ -6,23 +6,25 @@ interface PostActionProps {
   postId: string;
   published: boolean;
   userRole: number;
+  refreshPosts: () => Promise<void>;
 }
 
 export default function PostActions({
   postId,
   published,
   userRole,
+  refreshPosts,
 }: PostActionProps) {
   const router = useRouter();
 
   const handleToggle = async () => {
     await togglePostStatus(postId);
-    router.refresh();
+    await refreshPosts();
   };
 
   const handleDelete = async () => {
     await deletePost(postId);
-    router.refresh();
+    await refreshPosts();
   };
 
   return (

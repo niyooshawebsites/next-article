@@ -27,7 +27,7 @@ export function PostTable({ userRole, userId }: DataTableProps) {
 
   const table = useReactTable({
     data: posts,
-    columns: getColumns(userRole),
+    columns: getColumns(userRole, loadPosts),
     rowCount: pageCount * pagination.pageSize,
     manualPagination: true,
     pageCount,
