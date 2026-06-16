@@ -5,9 +5,14 @@ import { useRouter } from "next/navigation";
 interface PostActionProps {
   postId: string;
   published: boolean;
+  userRole: number;
 }
 
-export default function PostActions({ postId, published }: PostActionProps) {
+export default function PostActions({
+  postId,
+  published,
+  userRole,
+}: PostActionProps) {
   const router = useRouter();
 
   const handleToggle = async () => {
@@ -22,12 +27,14 @@ export default function PostActions({ postId, published }: PostActionProps) {
 
   return (
     <div className="flex gap-2">
-      <button
-        onClick={handleToggle}
-        className="px-2 py-1 text-green-700 cursor-pointer"
-      >
-        {published ? "Unpublish" : "Publish"}
-      </button>
+      {userRole === 1 && (
+        <button
+          onClick={handleToggle}
+          className="px-2 py-1 text-green-700 cursor-pointer"
+        >
+          {published ? "Unpublish" : "Publish"}
+        </button>
+      )}
 
       <button
         onClick={() => router.push(`/dashboard/article/edit/${postId}`)}

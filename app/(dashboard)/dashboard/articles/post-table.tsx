@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  ColumnDef,
   flexRender,
   getCoreRowModel,
   useReactTable,
@@ -10,14 +9,14 @@ import {
 import type { Post } from "@/lib/generated/prisma/client";
 import { useState, useEffect } from "react";
 import { fetchPosts } from "@/app/actions/post-actions";
+import { getColumns } from "./columns";
 
 interface DataTableProps {
-  columns: ColumnDef<Post>[];
   userRole: number;
   userId: string;
 }
 
-export function PostTable({ columns, userRole, userId }: DataTableProps) {
+export function PostTable({ userRole, userId }: DataTableProps) {
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
@@ -28,7 +27,7 @@ export function PostTable({ columns, userRole, userId }: DataTableProps) {
 
   const table = useReactTable({
     data: posts,
-    columns,
+    columns: getColumns(userRole),
     rowCount: pageCount * pagination.pageSize,
     manualPagination: true,
     pageCount,
