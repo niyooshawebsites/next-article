@@ -19,12 +19,15 @@ export default function CreateArticleForm() {
   const [state, formAction] = useActionState(createPost, initialState);
 
   const [imageUrl, setImageUrl] = useState("");
+  const [previewUrl, setPreviewUrl] = useState("");
   const [uploading, setUploading] = useState(false);
 
   async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
 
     if (!file) return;
+
+    setPreviewUrl(URL.createObjectURL(file));
 
     try {
       setUploading(true);
@@ -49,7 +52,7 @@ export default function CreateArticleForm() {
     if (state.success) {
       setImageUrl("");
     }
-  }, [state.success]);
+  }, [state.success, imageUrl]);
   /* eslint-enable react-hooks/set-state-in-effect */
 
   return (
@@ -85,7 +88,7 @@ export default function CreateArticleForm() {
             {imageUrl && (
               <div className="mt-4">
                 <Image
-                  src={imageUrl}
+                  src={previewUrl}
                   alt="preview"
                   width={300}
                   height={200}
