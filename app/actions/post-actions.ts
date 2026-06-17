@@ -68,6 +68,53 @@ export async function fetchPosts(
   }
 }
 
+// fetching published articles
+export async function fetchPusblishedPosts({ page = 1, pageSize = 10 }) {
+  try {
+    const publisedPosts = await prisma.post.findMany({
+      where: {
+        published: true,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      skip: (page - 1) * pageSize,
+      take: pageSize,
+    });
+
+    const totalPosts = await prisma.post.count({
+      where: {
+        published: true,
+      },
+    });
+
+    if (!publisedPosts) {
+      return {
+        success: false,
+        msg: "No published articles",
+      };
+    }
+
+    return {
+      success: true,
+      msg: "Fetched all published articles successfully",
+      data: publisedPosts,
+      pagination: {
+        page,
+        pageSize,
+        totalPosts,
+        totalPages: Math.ceil(totalPosts / pageSize),
+      },
+    };
+  } catch (err) {
+    console.log(err);
+    return {
+      success: false,
+      msg: "Failed to fetched published articles",
+    };
+  }
+}
+
 // creating articles
 export async function createPost(prevState: ActionState, formData: FormData) {
   const title = (formData.get("title") as string)?.trim();
