@@ -6,6 +6,9 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useActionState, useState, useEffect } from "react";
 import { createPost } from "@/app/actions/post-actions";
+import { getPresignedUrl } from "@/app/actions/upload-action";
+import Image from "next/image";
+import axios from "axios";
 
 const initialState = {
   success: false,
@@ -16,13 +19,35 @@ export default function CreateArticleForm() {
   const [state, formAction] = useActionState(createPost, initialState);
 
   const [imageUrl, setImageUrl] = useState("");
-  const [imageError, setImageError] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
+  async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+
+    if (!file) return;
+
+    try {
+      setUploading(true);
+
+      const res = await getPresignedUrl(file.name, file.type);
+
+      await axios.put(res.uploadUrl, file, {
+        headers: {
+          "Content-Type": file.type,
+        },
+      });
+
+      setImageUrl(res.fileUrl);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setUploading(false);
+    }
+  }
   useEffect((): void => {
     /* eslint-disable react-hooks/set-state-in-effect */
     if (state.success) {
       setImageUrl("");
-      setImageError(false);
     }
   }, [state.success]);
   /* eslint-enable react-hooks/set-state-in-effect */
@@ -45,37 +70,28 @@ export default function CreateArticleForm() {
           </Field>
 
           <Field>
-            <FieldLabel htmlFor="imageUrl">Image URL</FieldLabel>
+            <FieldLabel htmlFor="imageUrl">Upload Image</FieldLabel>
             <Input
-              type="text"
+              type="file"
               id="imageUrl"
-              name="imageUrl"
-              value={imageUrl}
-              onChange={(e) => {
-                setImageUrl(e.target.value);
-                setImageError(false);
-              }}
+              accept="image/*"
+              onChange={handleFileUpload}
               required
               className="border-gray-300 focus:outline-none focus:ring-0 focus-visible:ring-0 focus:border-gray-500"
             />
 
+            <input type="hidden" name="imageUrl" value={imageUrl} />
+
             {imageUrl && (
               <div className="mt-4">
-                <img
+                <Image
                   src={imageUrl}
-                  alt="Article preview"
+                  alt="preview"
                   width={300}
+                  height={200}
                   className="rounded border"
-                  onError={() => setImageError(true)}
                 />
               </div>
-            )}
-
-            {imageError && (
-              <p className="text-red-500 text-sm mt-2">
-                This image cannot be displayed. The URL may be invalid or the
-                remote server may block image loading.
-              </p>
             )}
           </Field>
 
@@ -102,9 +118,10 @@ export default function CreateArticleForm() {
           <Button
             type="submit"
             variant="default"
+            disabled={uploading || !imageUrl}
             className="cursor-pointer bg-gray-800 text-white hover:bg-gray-900"
           >
-            Create
+            {uploading ? "Creating..." : "Create"}
           </Button>
         </form>
       </div>
