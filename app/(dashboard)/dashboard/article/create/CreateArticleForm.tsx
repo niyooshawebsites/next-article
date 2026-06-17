@@ -121,7 +121,7 @@ export default function CreateArticleForm() {
             disabled={uploading || !imageUrl}
             className="cursor-pointer bg-gray-800 text-white hover:bg-gray-900"
           >
-            {uploading ? "Creating..." : "Create"}
+            {uploading ? "Uploading..." : "Create"}
           </Button>
         </form>
       </div>

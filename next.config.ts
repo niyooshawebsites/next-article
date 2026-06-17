@@ -7,7 +7,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "**",
+        hostname: "next-articles.s3.ap-south-1.amazonaws.com", // "**" for whitelisting all domains
       },
     ],
   },
