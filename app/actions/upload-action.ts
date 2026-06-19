@@ -18,6 +18,6 @@ export async function getPresignedUrl(fileName: string, fileType: string) {
 
   return {
     uploadUrl,
-    fileUrl: `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`,
+    key,
   };
 }

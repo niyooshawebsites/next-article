@@ -18,7 +18,7 @@ const initialState = {
 export default function CreateArticleForm() {
   const [state, formAction] = useActionState(createPost, initialState);
 
-  const [imageUrl, setImageUrl] = useState("");
+  const [imageKey, setImageKey] = useState("");
   const [previewUrl, setPreviewUrl] = useState("");
   const [uploading, setUploading] = useState(false);
 
@@ -40,7 +40,7 @@ export default function CreateArticleForm() {
         },
       });
 
-      setImageUrl(res.fileUrl);
+      setImageKey(res.key);
     } catch (error) {
       console.error(error);
     } finally {
@@ -50,9 +50,9 @@ export default function CreateArticleForm() {
   useEffect((): void => {
     /* eslint-disable react-hooks/set-state-in-effect */
     if (state.success) {
-      setImageUrl("");
+      setImageKey("");
     }
-  }, [state.success, imageUrl]);
+  }, [state.success, imageKey]);
   /* eslint-enable react-hooks/set-state-in-effect */
 
   return (
@@ -73,19 +73,19 @@ export default function CreateArticleForm() {
           </Field>
 
           <Field>
-            <FieldLabel htmlFor="imageUrl">Upload Image</FieldLabel>
+            <FieldLabel htmlFor="imageKey">Upload Image</FieldLabel>
             <Input
               type="file"
-              id="imageUrl"
+              id="imageKey"
               accept="image/*"
               onChange={handleFileUpload}
               required
               className="border-gray-300 focus:outline-none focus:ring-0 focus-visible:ring-0 focus:border-gray-500"
             />
 
-            <input type="hidden" name="imageUrl" value={imageUrl} />
+            <input type="hidden" name="imageUrl" value={imageKey} />
 
-            {imageUrl && (
+            {imageKey && (
               <div className="mt-4">
                 <Image
                   src={previewUrl}
@@ -121,7 +121,7 @@ export default function CreateArticleForm() {
           <Button
             type="submit"
             variant="default"
-            disabled={uploading || !imageUrl}
+            disabled={uploading || !imageKey}
             className="cursor-pointer bg-gray-800 text-white hover:bg-gray-900"
           >
             {uploading ? "Uploading..." : "Create"}
