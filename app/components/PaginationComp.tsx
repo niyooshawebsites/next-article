@@ -17,7 +17,30 @@ export default function PaginationComp({
   currentPage,
   totalPages,
 }: PaginationProps) {
-  const pages = Array.from({ length: totalPages }, (_, index) => index + 1);
+  // Build visible pages
+  const pageNumbers: number[] = [];
+
+  for (let i = 1; i <= totalPages; i++) {
+    if (
+      i === 1 ||
+      i === totalPages ||
+      (i >= currentPage - 1 && i <= currentPage + 1)
+    ) {
+      pageNumbers.push(i);
+    }
+  }
+
+  // Insert ellipsis where needed
+  const items: (number | "ellipsis")[] = [];
+
+  for (let i = 0; i < pageNumbers.length; i++) {
+    if (i > 0 && pageNumbers[i] - pageNumbers[i - 1] > 1) {
+      items.push("ellipsis");
+    }
+
+    items.push(pageNumbers[i]);
+  }
+
   return (
     <Pagination>
       <PaginationContent>
@@ -28,15 +51,19 @@ export default function PaginationComp({
           </PaginationItem>
         )}
 
-        {/* Page numbers */}
-        {pages.map((page) => (
-          <PaginationItem key={page}>
-            <PaginationLink
-              href={`?page=${page}`}
-              isActive={currentPage == page}
-            >
-              {page}
-            </PaginationLink>
+        {/* Page Numbers */}
+        {items.map((item, index) => (
+          <PaginationItem key={index}>
+            {item === "ellipsis" ? (
+              <PaginationEllipsis />
+            ) : (
+              <PaginationLink
+                href={`?page=${item}`}
+                isActive={item === currentPage}
+              >
+                {item < 10 ? `0${item}` : item}
+              </PaginationLink>
+            )}
           </PaginationItem>
         ))}
 
