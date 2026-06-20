@@ -1,3 +1,5 @@
+"use server";
+
 import prisma from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 
@@ -6,11 +8,12 @@ interface ActionState {
   msg: string;
 }
 
+// creating category
 export async function CreateCategory(
   prevState: ActionState,
   formData: FormData,
 ) {
-  const name = (formData.get("title") as string)?.trim();
+  const name = (formData.get("name") as string)?.trim();
 
   const session = await auth();
 
@@ -35,7 +38,7 @@ export async function CreateCategory(
       },
     });
 
-    if (!existingCategory) {
+    if (existingCategory) {
       return {
         success: false,
         msg: "Category already exists",
@@ -59,6 +62,46 @@ export async function CreateCategory(
     return {
       success: false,
       msg: "Failed to create category",
+    };
+  }
+}
+
+// fetching all categories
+export async function fetchAllCategories({ page = 1, pageSize = 10 }) {
+  try {
+    const categories = await prisma.category.findMany({
+      orderBy: {
+        createdAt: "desc",
+      },
+      skip: (page - 1) * pageSize,
+      take: pageSize,
+    });
+
+    if (categories.length == 0) {
+      return {
+        success: false,
+        msg: "No cagetory found",
+      };
+    }
+
+    const totalCategories = await prisma.category.count();
+
+    return {
+      success: true,
+      msg: "Categories fetched successfully",
+      data: categories,
+      pagination: {
+        page,
+        pageSize,
+        totalCategories,
+        totalPages: Math.ceil(totalCategories / pageSize),
+      },
+    };
+  } catch (err) {
+    console.log(err);
+    return {
+      success: false,
+      msg: "Failed to fetch all categories",
     };
   }
 }

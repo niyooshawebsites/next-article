@@ -2,6 +2,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import AppSidebar from "../components/AppSidebar";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Toaster } from "@/components/ui/sonner";
 import "../globals.css";
 
 const geistSans = Geist({
@@ -34,6 +35,7 @@ export default function DashboardLayout({
               <main className="w-full p-3">
                 <SidebarTrigger />
                 {children}
+                <Toaster />
               </main>
             </SidebarProvider>
           </TooltipProvider>

@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useActionState, useState, useEffect } from "react";
 import { createPost } from "@/app/actions/post-actions";
 import { getPresignedUrl } from "@/app/actions/upload-action";
+import { toast } from "sonner";
 import Image from "next/image";
 import axios from "axios";
 
@@ -51,6 +52,13 @@ export default function CreateArticleForm() {
     /* eslint-disable react-hooks/set-state-in-effect */
     if (state.success) {
       setImageKey("");
+      return;
+    }
+
+    if (state.success) {
+      toast.success(state.msg, { position: "top-center" });
+    } else {
+      toast.error(state.msg, { position: "top-center" });
     }
   }, [state.success, imageKey]);
   /* eslint-enable react-hooks/set-state-in-effect */
@@ -107,16 +115,6 @@ export default function CreateArticleForm() {
               className="h-96 border-gray-300 focus:outline-none focus:ring-0 focus-visible:ring-0 focus:border-gray-500"
             />
           </Field>
-
-          {state.msg && (
-            <p
-              className={`text-sm ${
-                state.success ? "text-green-600" : "text-red-600"
-              }`}
-            >
-              {state.msg}
-            </p>
-          )}
 
           <Button
             type="submit"
