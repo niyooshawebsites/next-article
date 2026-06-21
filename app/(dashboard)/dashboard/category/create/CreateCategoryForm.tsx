@@ -26,7 +26,7 @@ export default function CreateCategoryForm() {
   }, [state]);
 
   return (
-    <div className="flex justify-center items-center w-4/12 border border-gray-300 rounded-lg">
+    <div className="flex justify-center items-center w-6/12 border border-gray-300 rounded-lg">
       <div className="w-full bg-gray-50 p-5 rounded-lg space-y-3">
         <h1>Fill out the details to create a category: </h1>
         <form action={formAction} className="space-y-4">

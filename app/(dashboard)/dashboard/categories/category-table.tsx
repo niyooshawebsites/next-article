@@ -1,33 +1,39 @@
 "use client";
 
+import { useState } from "react";
+
 import {
   flexRender,
   getCoreRowModel,
   useReactTable,
   PaginationState,
 } from "@tanstack/react-table";
-import type { Post } from "@/lib/generated/prisma/client";
-import { useState, useEffect } from "react";
-import { fetchPosts } from "@/app/actions/post-actions";
 import { getColumns } from "./columns";
 
-interface DataTableProps {
-  userRole: number;
-  userId: string;
+interface Category {
+  id: string;
+  name: string;
+  slug: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-export function PostTable({ userRole, userId }: DataTableProps) {
+interface CategoryTableProps {
+  data: Category[];
+}
+
+export function CategoryTable({ data }: CategoryTableProps) {
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
   });
 
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [posts, setPosts] = useState<Category[]>([]);
   const [pageCount, setPageCount] = useState(0);
 
   const table = useReactTable({
-    data: posts,
-    columns: getColumns(userRole, loadPosts),
+    data: data,
+    columns: getColumns(),
     rowCount: pageCount * pagination.pageSize,
     manualPagination: true,
     pageCount,
@@ -37,28 +43,9 @@ export function PostTable({ userRole, userId }: DataTableProps) {
     },
     onPaginationChange: setPagination,
   });
-
-  async function loadPosts(): Promise<void> {
-    const res = await fetchPosts(
-      pagination.pageIndex + 1,
-      pagination.pageSize,
-      userRole,
-      userId,
-    );
-
-    if (res.success && res.pagination) {
-      setPosts(res.data);
-      setPageCount(res.pagination.totalPages);
-    }
-  }
-
-  useEffect(() => {
-    loadPosts();
-  }, [pagination.pageIndex, pagination.pageSize]);
-
   return (
     <>
-      {posts.length > 0 ? (
+      {data.length > 0 ? (
         <>
           <table className="w-full border">
             <thead>
@@ -118,9 +105,7 @@ export function PostTable({ userRole, userId }: DataTableProps) {
           </div>
         </>
       ) : (
-        <>
-          <span>No articles yet...</span>
-        </>
+        <span>No articles yet...</span>
       )}
     </>
   );

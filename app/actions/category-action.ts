@@ -2,6 +2,7 @@
 
 import prisma from "@/lib/prisma";
 import { auth } from "@/lib/auth";
+import { revalidatePath } from "next/cache";
 
 interface ActionState {
   success: boolean;
@@ -94,7 +95,7 @@ export async function fetchAllCategories({ page = 1, pageSize = 10 }) {
         page,
         pageSize,
         totalCategories,
-        totalPages: Math.ceil(totalCategories / pageSize),
+        totalPages: Math.ceil(totalCategories / pageSize) || 1,
       },
     };
   } catch (err) {
@@ -115,6 +116,8 @@ export async function deleteCategory(cid: string) {
       },
     });
 
+    revalidatePath("/dashboard/categories");
+
     return {
       success: true,
       msg: "Category deleted successfully",
@@ -124,6 +127,32 @@ export async function deleteCategory(cid: string) {
     return {
       success: false,
       msg: "Failed to delete the category",
+    };
+  }
+}
+
+// delete categories
+export async function deleteCategories(ids: string[]) {
+  try {
+    await prisma.category.deleteMany({
+      where: {
+        id: {
+          in: ids,
+        },
+      },
+    });
+
+    revalidatePath("/dashboard/categories");
+
+    return {
+      success: true,
+      msg: "Categories deleted successfully",
+    };
+  } catch (err) {
+    console.log(err);
+    return {
+      success: false,
+      msg: "Failed to delete categories",
     };
   }
 }

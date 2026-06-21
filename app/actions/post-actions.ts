@@ -55,7 +55,7 @@ export async function fetchPosts(
         page,
         pageSize,
         totalPosts,
-        totalPages: Math.ceil(totalPosts / pageSize),
+        totalPages: Math.ceil(totalPosts / pageSize) || 1,
       },
     };
   } catch (err) {
@@ -103,7 +103,7 @@ export async function fetchPusblishedPosts({ page = 1, pageSize = 10 }) {
         page,
         pageSize,
         totalPosts,
-        totalPages: Math.ceil(totalPosts / pageSize),
+        totalPages: Math.ceil(totalPosts / pageSize) || 1,
       },
     };
   } catch (err) {
