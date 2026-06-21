@@ -105,3 +105,25 @@ export async function fetchAllCategories({ page = 1, pageSize = 10 }) {
     };
   }
 }
+
+// delete category
+export async function deleteCategory(cid: string) {
+  try {
+    await prisma.category.delete({
+      where: {
+        id: cid,
+      },
+    });
+
+    return {
+      success: true,
+      msg: "Category deleted successfully",
+    };
+  } catch (err) {
+    console.log(err);
+    return {
+      success: false,
+      msg: "Failed to delete the category",
+    };
+  }
+}

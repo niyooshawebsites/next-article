@@ -13,7 +13,7 @@ import axios from "axios";
 
 const initialState = {
   success: false,
-  msg: "",
+  msg: "ghghg",
 };
 
 export default function CreateArticleForm() {
@@ -50,9 +50,10 @@ export default function CreateArticleForm() {
   }
   useEffect((): void => {
     /* eslint-disable react-hooks/set-state-in-effect */
+    if (!state.success) return;
+
     if (state.success) {
       setImageKey("");
-      return;
     }
 
     if (state.success) {
@@ -60,7 +61,7 @@ export default function CreateArticleForm() {
     } else {
       toast.error(state.msg, { position: "top-center" });
     }
-  }, [state.success, imageKey]);
+  }, [state, imageKey]);
   /* eslint-enable react-hooks/set-state-in-effect */
 
   return (

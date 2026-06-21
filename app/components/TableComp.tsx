@@ -10,7 +10,7 @@ import {
 export type Column<T> = {
   id: number;
   header: string;
-  key: keyof T;
+  key?: keyof T;
   render?: (row: T, index: number) => React.ReactNode;
 };
 

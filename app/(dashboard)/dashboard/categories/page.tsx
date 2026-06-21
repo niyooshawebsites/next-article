@@ -1,4 +1,7 @@
-import { fetchAllCategories } from "@/app/actions/category-action";
+import {
+  fetchAllCategories,
+  deleteCategory,
+} from "@/app/actions/category-action";
 import PaginationComp from "@/app/components/PaginationComp";
 import TableComp from "@/app/components/TableComp";
 import type { Column } from "@/app/components/TableComp";
@@ -29,10 +32,17 @@ const columns: Column<Category>[] = [
   {
     id: 3,
     header: "Action",
-    render: () => (
+    render: (row) => (
       <>
         <button>Edit</button>
-        <button>Delete</button>
+        <form
+          action={async () => {
+            "use server";
+            await deleteCategory(row.id);
+          }}
+        >
+          <button type="submit">Delete</button>
+        </form>
       </>
     ),
   },
@@ -43,13 +53,16 @@ export default async function CatetoryTable({ searchParams }: Props) {
   const page = Number(params.page || 1);
 
   const res = await fetchAllCategories({ page, pageSize: 10 });
-  const categories = res.data;
+  const categories = res.data!;
   const totalPages = res.pagination!.totalPages;
 
   return (
-    <main className="flex flex-col min-h-screen">
-      <h1 className="text-2xl font-bold mb-4 content-end">Categories</h1>
-      <TableComp columns={columns} data={categories} />
+    <main className="flex flex-col justify-between min-h-screen p-5 pb-24">
+      <div>
+        <h1 className="text-2xl font-bold mb-4 content-end">Categories</h1>
+        <TableComp columns={columns} data={categories} />
+      </div>
+
       <PaginationComp currentPage={page} totalPages={totalPages} />
     </main>
   );
