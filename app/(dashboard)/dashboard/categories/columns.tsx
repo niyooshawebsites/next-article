@@ -25,12 +25,12 @@ export const columns: ColumnDef<Category>[] = [
 
   {
     id: "actions",
-    header: "Actions",
+    header: () => <div className="text-center">Actions</div>,
     cell: ({ row }) => {
       const category = row.original;
 
       return (
-        <div className="flex gap-2">
+        <div className="flex justify-center gap-2">
           <Link href={`/dashboard/category/edit/${category.id}`}>
             <Button size="sm" variant="outline">
               Edit

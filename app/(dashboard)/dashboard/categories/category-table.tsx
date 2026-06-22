@@ -45,8 +45,8 @@ export default function CategoryTable({
 
   return (
     <>
-      <Table>
-        <TableHeader>
+      <Table className="p-3 w-full md:w-3/12">
+        <TableHeader className="bg-gray-900 text-white">
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
@@ -66,7 +66,7 @@ export default function CategoryTable({
         <TableBody>
           {table.getRowModel().rows.length ? (
             table.getRowModel().rows.map((row) => (
-              <TableRow key={row.id}>
+              <TableRow key={row.id} className="bg-gray-100 p-3">
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id}>
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}

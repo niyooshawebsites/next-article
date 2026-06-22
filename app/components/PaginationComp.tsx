@@ -42,7 +42,7 @@ export default function PaginationComp({
   }
 
   return (
-    <Pagination>
+    <Pagination className="inline-block">
       <PaginationContent>
         {/* Previous */}
         {currentPage > 1 && (

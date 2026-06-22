@@ -2,6 +2,7 @@
 
 import { useTransition } from "react";
 import { Button } from "@/components/ui/button";
+import { Span } from "next/dist/trace";
 
 interface Props {
   id: string;
@@ -37,8 +38,13 @@ export default function DeleteDataButton({ id, deleteData }: Props) {
       size="sm"
       disabled={isPending}
       onClick={handleDelete}
+      className="cursor-pointer"
     >
-      {isPending ? "Deleting..." : "Delete"}
+      {isPending ? (
+        <span>Deleting...</span>
+      ) : (
+        <span className="text-red-500">Delete</span>
+      )}
     </Button>
   );
 }
