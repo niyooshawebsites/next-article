@@ -42,7 +42,6 @@ export function PostTable({ userRole, userId }: DataTableProps) {
     const res = await fetchPosts(
       pagination.pageIndex + 1,
       pagination.pageSize,
-      userRole,
       userId,
     );
 

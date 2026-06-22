@@ -9,16 +9,22 @@ interface ActionState {
 }
 
 // fetching all the articles
-export async function fetchPosts(
-  page = 1,
-  pageSize = 10,
-  userRole: number,
-  userId: string,
-) {
+export async function fetchPosts(page = 1, pageSize = 10, userId: string) {
   try {
     let posts;
     let totalPosts;
-    if (userRole === 1) {
+
+    const session = await auth();
+
+    if (!session?.user?.id) {
+      return {
+        success: false,
+        msg: "Unauthorized",
+      };
+    }
+    const isAdmin = session.user.role === 1;
+
+    if (isAdmin) {
       posts = await prisma.post.findMany({
         orderBy: {
           createdAt: "desc",
@@ -88,13 +94,6 @@ export async function fetchPusblishedPosts({ page = 1, pageSize = 10 }) {
       },
     });
 
-    if (!publisedPosts) {
-      return {
-        success: false,
-        msg: "No published articles",
-      };
-    }
-
     return {
       success: true,
       msg: "Fetched all published articles successfully",
@@ -161,6 +160,24 @@ export async function createPost(prevState: ActionState, formData: FormData) {
 
 // toggling publishing articles
 export async function togglePostStatus(postId: string) {
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    return {
+      success: false,
+      msg: "Unauthorized",
+    };
+  }
+
+  const isAdmin = session.user.role === 1;
+
+  if (!isAdmin) {
+    return {
+      success: false,
+      msg: "Unauthorized.Not admin",
+    };
+  }
+
   try {
     const post = await prisma.post.findUnique({
       where: {
@@ -209,7 +226,7 @@ export async function deletePost(postId: string) {
     });
 
     return {
-      success: false,
+      success: true,
       msg: "Article deleted successfully",
     };
   } catch (err) {
@@ -275,7 +292,6 @@ export async function editPost(
         title,
         imageUrl,
         content,
-        authorId: session.user.id,
       },
     });
 

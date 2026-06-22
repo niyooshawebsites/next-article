@@ -3,10 +3,13 @@
 import prisma from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
+import { Category } from "@/lib/generated/prisma/client";
+import slugify from "slugify";
 
 interface ActionState {
   success: boolean;
   msg: string;
+  category?: Category;
 }
 
 // creating category
@@ -15,7 +18,6 @@ export async function CreateCategory(
   formData: FormData,
 ) {
   const name = (formData.get("name") as string)?.trim();
-
   const session = await auth();
 
   if (!name) {
@@ -25,7 +27,7 @@ export async function CreateCategory(
     };
   }
 
-  if (!session?.user.id) {
+  if (session?.user.role !== 1) {
     return {
       success: false,
       msg: "Unauthorized",
@@ -49,7 +51,10 @@ export async function CreateCategory(
     const category = await prisma.category.create({
       data: {
         name,
-        slug: name.split(" ").join("-"),
+        slug: slugify(name, {
+          lower: true,
+          strict: true,
+        }),
       },
     });
 
@@ -78,13 +83,6 @@ export async function fetchAllCategories({ page = 1, pageSize = 10 }) {
       take: pageSize,
     });
 
-    if (categories.length == 0) {
-      return {
-        success: false,
-        msg: "No cagetory found",
-      };
-    }
-
     const totalCategories = await prisma.category.count();
 
     return {
@@ -108,11 +106,26 @@ export async function fetchAllCategories({ page = 1, pageSize = 10 }) {
 }
 
 // delete category
-export async function deleteCategory(cid: string) {
+export async function deleteCategory(id: string) {
+  if (!id) {
+    return {
+      success: false,
+      msg: "Invalid category id",
+    };
+  }
+  const session = await auth();
+
+  if (session?.user.role !== 1) {
+    return {
+      success: false,
+      msg: "Unauthorized",
+    };
+  }
+
   try {
     await prisma.category.delete({
       where: {
-        id: cid,
+        id,
       },
     });
 
@@ -133,6 +146,21 @@ export async function deleteCategory(cid: string) {
 
 // delete categories
 export async function deleteCategories(ids: string[]) {
+  if (!ids) {
+    return {
+      success: false,
+      msg: "Invalid category id",
+    };
+  }
+
+  const session = await auth();
+
+  if (session?.user.role !== 1) {
+    return {
+      success: false,
+      msg: "Unauthorized",
+    };
+  }
   try {
     await prisma.category.deleteMany({
       where: {
@@ -153,6 +181,62 @@ export async function deleteCategories(ids: string[]) {
     return {
       success: false,
       msg: "Failed to delete categories",
+    };
+  }
+}
+
+// edit categories
+export async function editCategory(
+  id: string,
+  prevState: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  if (!id) {
+    return {
+      success: false,
+      msg: "Invalid category id",
+    };
+  }
+
+  const name = (formData.get("name") as string)?.trim();
+  const session = await auth();
+  if (!name) {
+    return {
+      success: false,
+      msg: "Please fill out the category",
+    };
+  }
+
+  if (session?.user.role !== 1) {
+    return {
+      success: false,
+      msg: "Unauthorized",
+    };
+  }
+
+  try {
+    await prisma.category.update({
+      where: {
+        id,
+      },
+      data: {
+        name,
+        slug: slugify(name, {
+          lower: true,
+          strict: true,
+        }),
+      },
+    });
+
+    return {
+      success: true,
+      msg: "Category updated successfully",
+    };
+  } catch (err) {
+    console.log(err);
+    return {
+      success: false,
+      msg: "Failed to update the category",
     };
   }
 }
