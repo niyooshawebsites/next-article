@@ -1,5 +1,5 @@
 "use client";
-import { useActionState, useState, useEffect } from "react";
+import { useActionState, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";

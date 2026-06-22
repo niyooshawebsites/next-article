@@ -1,112 +1,95 @@
 "use client";
 
-import { useState } from "react";
-
 import {
   flexRender,
   getCoreRowModel,
   useReactTable,
-  PaginationState,
 } from "@tanstack/react-table";
-import { getColumns } from "./columns";
 
-interface Category {
-  id: string;
-  name: string;
-  slug: string;
-  createdAt: Date;
-  updatedAt: Date;
+import { columns, Category } from "./columns";
+
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+
+import PaginationComp from "@/app/components/PaginationComp";
+
+interface PaginationMeta {
+  page: number;
+  pageSize: number;
+  totalCategories: number;
+  totalPages: number;
 }
 
-interface CategoryTableProps {
+interface Props {
   data: Category[];
+  pagination: PaginationMeta;
+  currentPage: number;
 }
 
-export function CategoryTable({ data }: CategoryTableProps) {
-  const [pagination, setPagination] = useState<PaginationState>({
-    pageIndex: 0,
-    pageSize: 10,
-  });
-
-  const [posts, setPosts] = useState<Category[]>([]);
-  const [pageCount, setPageCount] = useState(0);
-
+export default function CategoryTable({
+  data,
+  pagination,
+  currentPage,
+}: Props) {
   const table = useReactTable({
-    data: data,
-    columns: getColumns(),
-    rowCount: pageCount * pagination.pageSize,
-    manualPagination: true,
-    pageCount,
+    data,
+    columns,
     getCoreRowModel: getCoreRowModel(),
-    state: {
-      pagination,
-    },
-    onPaginationChange: setPagination,
   });
+
   return (
     <>
-      {data.length > 0 ? (
-        <>
-          <table className="w-full border">
-            <thead>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <tr key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
-                    <th
-                      key={header.id}
-                      className="border border-gray-300 p-1 text-left"
-                    >
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
-                    </th>
-                  ))}
-                </tr>
-              ))}
-            </thead>
-
-            <tbody>
-              {table.getRowModel().rows.map((row) => (
-                <tr key={row.id}>
-                  {row.getVisibleCells().map((cell) => (
-                    <td key={cell.id} className="border border-gray-300 p-1">
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
+      <Table>
+        <TableHeader>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <TableRow key={headerGroup.id}>
+              {headerGroup.headers.map((header) => (
+                <TableHead key={header.id}>
+                  {header.isPlaceholder
+                    ? null
+                    : flexRender(
+                        header.column.columnDef.header,
+                        header.getContext(),
                       )}
-                    </td>
-                  ))}
-                </tr>
+                </TableHead>
               ))}
-            </tbody>
-          </table>
+            </TableRow>
+          ))}
+        </TableHeader>
 
-          <div className="flex gap-2 mt-4">
-            <button
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
-            >
-              Previous
-            </button>
+        <TableBody>
+          {table.getRowModel().rows.length ? (
+            table.getRowModel().rows.map((row) => (
+              <TableRow key={row.id}>
+                {row.getVisibleCells().map((cell) => (
+                  <TableCell key={cell.id}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={3} className="text-center py-6">
+                No categories found
+              </TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
 
-            <span>
-              Page {table.getState().pagination.pageIndex + 1} of {pageCount}
-            </span>
-
-            <button
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
-            >
-              Next
-            </button>
-          </div>
-        </>
-      ) : (
-        <span>No articles yet...</span>
-      )}
+      <div className="mt-5">
+        <PaginationComp
+          currentPage={currentPage}
+          totalPages={pagination.totalPages}
+        />
+      </div>
     </>
   );
 }
