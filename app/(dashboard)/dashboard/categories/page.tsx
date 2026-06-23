@@ -18,7 +18,7 @@ export default async function AllCategories({ searchParams }: Props) {
   });
 
   return (
-    <main className="flex flex-col min-h-screen p-5 pb-24">
+    <main className="flex flex-col min-h-screen p-5">
       <h1 className="mb-4 text-2xl font-bold">All Categories</h1>
 
       <CategoryTable

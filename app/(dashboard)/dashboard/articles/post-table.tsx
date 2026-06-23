@@ -1,126 +1,56 @@
 "use client";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { deletePosts } from "@/app/actions/post-actions";
 
 import {
   flexRender,
-  getCoreRowModel,
   useReactTable,
-  PaginationState,
+  getCoreRowModel,
+  RowSelectionState,
 } from "@tanstack/react-table";
-import type { Post } from "@/lib/generated/prisma/client";
-import { useState, useEffect } from "react";
-import { fetchPosts } from "@/app/actions/post-actions";
-import { getColumns } from "./columns";
 
-interface DataTableProps {
-  userRole: number;
-  userId: string;
+import { columns, Article } from "./columns";
+
+import {
+  Table,
+  TableHeader,
+  TableFooter,
+  TableBody,
+  TableRow,
+  TableCell,
+} from "@/components/ui/table";
+
+import PaginationComp from "@/app/components/PaginationComp";
+
+interface PaginationMeta {
+  page: number;
+  pageSize: number;
+  totalPosts: number;
+  totalpages: number;
 }
 
-export function PostTable({ userRole, userId }: DataTableProps) {
-  const [pagination, setPagination] = useState<PaginationState>({
-    pageIndex: 0,
-    pageSize: 10,
-  });
+interface Props {
+  data: Article[] | [];
+  pagination: PaginationMeta;
+  currentPage: number;
+}
 
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [pageCount, setPageCount] = useState(0);
+export default function ArticleTable({ data, pagination, currentPage }: Props) {
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
   const table = useReactTable({
-    data: posts,
-    columns: getColumns(userRole, loadPosts),
-    rowCount: pageCount * pagination.pageSize,
-    manualPagination: true,
-    pageCount,
+    data,
+    columns,
     getCoreRowModel: getCoreRowModel(),
+    enableRowSelection: true,
+    onRowSelectionChange: setRowSelection,
     state: {
-      pagination,
+      rowSelection,
     },
-    onPaginationChange: setPagination,
   });
 
-  async function loadPosts(): Promise<void> {
-    const res = await fetchPosts(
-      pagination.pageIndex + 1,
-      pagination.pageSize,
-      userId,
-    );
-
-    if (res.success && res.pagination) {
-      setPosts(res.data);
-      setPageCount(res.pagination.totalPages);
-    }
-  }
-
-  useEffect(() => {
-    loadPosts();
-  }, [pagination.pageIndex, pagination.pageSize]);
-
-  return (
-    <>
-      {posts.length > 0 ? (
-        <>
-          <table className="w-full border">
-            <thead>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <tr key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
-                    <th
-                      key={header.id}
-                      className="border border-gray-300 p-1 text-left"
-                    >
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
-                    </th>
-                  ))}
-                </tr>
-              ))}
-            </thead>
-
-            <tbody>
-              {table.getRowModel().rows.map((row) => (
-                <tr key={row.id}>
-                  {row.getVisibleCells().map((cell) => (
-                    <td key={cell.id} className="border border-gray-300 p-1">
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-
-          <div className="flex gap-2 mt-4">
-            <button
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
-            >
-              Previous
-            </button>
-
-            <span>
-              Page {table.getState().pagination.pageIndex + 1} of {pageCount}
-            </span>
-
-            <button
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
-            >
-              Next
-            </button>
-          </div>
-        </>
-      ) : (
-        <>
-          <span>No articles yet...</span>
-        </>
-      )}
-    </>
-  );
+  const selectedIds = table
+    .getSelectedRowModel()
+    .rows.map((row) => row.original.id);
 }

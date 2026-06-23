@@ -2,6 +2,7 @@
 
 import prisma from "@/lib/prisma";
 import { auth } from "@/lib/auth";
+import { revalidatePath } from "next/cache";
 
 interface ActionState {
   success: boolean;
@@ -9,7 +10,11 @@ interface ActionState {
 }
 
 // fetching all the articles
-export async function fetchPosts(page = 1, pageSize = 10, userId: string) {
+export async function fetchAllPosts(
+  page: number = 1,
+  pageSize: number = 10,
+  userId: string,
+) {
   try {
     let posts;
     let totalPosts;
@@ -216,14 +221,25 @@ export async function togglePostStatus(postId: string) {
   }
 }
 
-// delete the articles
+// delete article
 export async function deletePost(postId: string) {
+  const session = await auth();
+
+  if (session?.user.role !== 1) {
+    return {
+      success: false,
+      msg: "Unauthorized",
+    };
+  }
+
   try {
     await prisma.post.delete({
       where: {
         id: postId,
       },
     });
+
+    revalidatePath("/dashboard/articles");
 
     return {
       success: true,
@@ -234,6 +250,41 @@ export async function deletePost(postId: string) {
     return {
       success: false,
       msg: "Failed to delete article",
+    };
+  }
+}
+
+// delete articles
+export async function deletePosts(ids: string[]) {
+  const session = await auth();
+
+  if (session?.user.role !== 1) {
+    return {
+      success: false,
+      msg: "Unauthorized",
+    };
+  }
+
+  try {
+    await prisma.post.deleteMany({
+      where: {
+        id: {
+          in: ids,
+        },
+      },
+    });
+
+    revalidatePath("/dashboard/articles");
+
+    return {
+      success: true,
+      msg: "Aricles deleted successfully",
+    };
+  } catch (err) {
+    console.log(err);
+    return {
+      success: false,
+      msg: "Failed to delete articles",
     };
   }
 }

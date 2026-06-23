@@ -31,7 +31,7 @@ interface PaginationMeta {
 }
 
 interface Props {
-  data: Category[];
+  data: Category[] | [];
   pagination: PaginationMeta;
   currentPage: number;
 }

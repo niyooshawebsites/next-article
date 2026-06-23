@@ -1,41 +1,68 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import PostActions from "./PostActions";
-import type { Post } from "@/lib/generated/prisma/client";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import DeleteDataButton from "@/app/components/DeleteButton";
+import { deletePost } from "@/app/actions/post-actions";
+import { Checkbox } from "@/components/ui/checkbox";
 
-export function getColumns(
-  userRole: number,
-  refreshPosts: () => Promise<void>,
-): ColumnDef<Post>[] {
-  return [
-    { accessorKey: "id", header: "ID" },
-    { accessorKey: "title", header: "Title" },
-    {
-      accessorKey: "published",
-      header: "Published",
-      cell: ({ row }) => (row.original.published ? "Yes" : "No"),
-    },
-    {
-      accessorKey: "createdAt",
-      header: "Created At",
-      cell: ({ row }) =>
-        new Date(row.original.createdAt).toLocaleDateString("en-IN"),
-    },
-    {
-      id: "actions",
-      header: "Actions",
-      cell: ({ row }) => {
-        const post = row.original;
-        return (
-          <PostActions
-            postId={post.id}
-            published={post.published}
-            userRole={userRole}
-            refreshPosts={refreshPosts}
-          />
-        );
-      },
-    },
-  ];
+export interface Article {
+  id: string;
+  title: string;
+  categoryId: string;
+  createdAt: Date;
 }
+
+export const columns: ColumnDef<Article>[] = [
+  {
+    id: "Select",
+    header: ({ table }) => (
+      <Checkbox
+        checked={table.getIsAllPageRowsSelected()}
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+      />
+    ),
+  },
+  {
+    id: "Serial",
+    header: "S.No",
+    cell: ({ row }) => row.index + 1,
+  },
+  {
+    accessorKey: "title",
+    header: "Article Title",
+  },
+  {
+    accessorKey: "categoryId",
+    header: "Category",
+  },
+  {
+    accessorKey: "createdAt",
+    header: "Published on",
+  },
+  {
+    id: "actions",
+    header: () => <div className="text-center">Actions</div>,
+    cell: ({ row }) => {
+      const post = row.original;
+      return (
+        <div className="flex justify-center gap-2">
+          <Link href={`/dashboard/article/edit/${post.id}`}>
+            <Button size="sm" variant="outline">
+              Edit
+            </Button>
+          </Link>
+
+          <DeleteDataButton id={post.id} deleteData={deletePost} />
+        </div>
+      );
+    },
+  },
+];
