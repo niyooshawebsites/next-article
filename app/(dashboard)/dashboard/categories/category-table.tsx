@@ -60,7 +60,7 @@ export default function CategoryTable({
 
   return (
     <>
-      {selectedIds.length > 0 ? (
+      {selectedIds.length > 0 && (
         <div className="mb-4">
           <Button
             variant="destructive"
@@ -77,8 +77,6 @@ export default function CategoryTable({
             Delete Selected ({selectedIds.length})
           </Button>
         </div>
-      ) : (
-        <></>
       )}
 
       {data.length > 0 ? (
@@ -133,9 +131,7 @@ export default function CategoryTable({
           </div>
         </>
       ) : (
-        <>
-          <span>No categories...</span>
-        </>
+        <span>No categories...</span>
       )}
     </>
   );

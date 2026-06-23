@@ -53,4 +53,35 @@ export default function ArticleTable({ data, pagination, currentPage }: Props) {
   const selectedIds = table
     .getSelectedRowModel()
     .rows.map((row) => row.original.id);
+
+  return (
+    <>
+      {selectedIds.length > 0 && (
+        <div className="mb-4">
+          <Button
+            variant="destructive"
+            disabled={selectedIds.length === 0}
+            onClick={async () => {
+              const confirmation = confirm(
+                "Do you really want to delete the data?",
+              );
+              if (!confirmation) return;
+              await deletePosts(selectedIds);
+            }}
+            className="text-red-500 cursor-pointer"
+          >
+            Delete Selected ({selectedIds.length})
+          </Button>
+        </div>
+      )}
+
+      {data.length > 0 ? (
+        <>
+          <Table></Table>
+        </>
+      ) : (
+        <span>No categories...</span>
+      )}
+    </>
+  );
 }

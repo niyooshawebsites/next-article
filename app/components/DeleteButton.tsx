@@ -2,7 +2,6 @@
 
 import { useTransition } from "react";
 import { Button } from "@/components/ui/button";
-import { Span } from "next/dist/trace";
 
 interface Props {
   id: string;
@@ -16,9 +15,7 @@ export default function DeleteDataButton({ id, deleteData }: Props) {
   const [isPending, startTransition] = useTransition();
 
   const handleDelete = () => {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this item?",
-    );
+    const confirmed = window.confirm("Are you sure you want to delete ?");
 
     if (!confirmed) return;
 
