@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import DeleteDataButton from "@/app/components/DeleteButton";
 import { deleteCategory } from "@/app/actions/category-action";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export interface Category {
   id: string;
@@ -12,6 +13,21 @@ export interface Category {
 }
 
 export const columns: ColumnDef<Category>[] = [
+  {
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+        checked={table.getIsAllPageRowsSelected()}
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+      />
+    ),
+  },
   {
     id: "serial",
     header: "S.No",

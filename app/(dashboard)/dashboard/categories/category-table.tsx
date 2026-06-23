@@ -1,9 +1,13 @@
 "use client";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { deleteCategories } from "@/app/actions/category-action";
 
 import {
   flexRender,
   getCoreRowModel,
   useReactTable,
+  RowSelectionState,
 } from "@tanstack/react-table";
 
 import { columns, Category } from "./columns";
@@ -37,14 +41,40 @@ export default function CategoryTable({
   pagination,
   currentPage,
 }: Props) {
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
+
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    enableRowSelection: true,
+    onRowSelectionChange: setRowSelection,
+    state: {
+      rowSelection,
+    },
   });
+
+  const selectedIds = table
+    .getSelectedRowModel()
+    .rows.map((row) => row.original.id);
 
   return (
     <>
+      {selectedIds.length > 0 ? (
+        <div className="mb-4">
+          <Button
+            variant="destructive"
+            disabled={selectedIds.length === 0}
+            onClick={() => console.log(selectedIds)}
+            className="text-red-500 cursor-pointer"
+          >
+            Delete Selected ({selectedIds.length})
+          </Button>
+        </div>
+      ) : (
+        <></>
+      )}
+
       <Table className="p-3 w-full md:w-3/12">
         <TableHeader className="bg-gray-900 text-white">
           {table.getHeaderGroups().map((headerGroup) => (
