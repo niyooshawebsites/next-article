@@ -12,7 +12,7 @@ export default async function AllCategories({ searchParams }: Props) {
 
   const page = Number(params.page ?? 1);
 
-  const res = await fetchACategories({
+  const res = await fetchCategories({
     page,
     pageSize: 10,
   });
