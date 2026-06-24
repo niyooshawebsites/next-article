@@ -9,6 +9,15 @@ import { getPresignedUrl } from "@/app/actions/upload-action";
 import axios from "axios";
 import { toast } from "sonner";
 import Image from "next/image";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+} from "@/components/ui/select";
+import type { Category } from "@/lib/generated/prisma/client";
 
 const initialState = {
   success: false,
@@ -20,22 +29,25 @@ interface ArticleProps {
   title: string;
   imageUrl: string;
   content: string;
+  categoryId: string;
 }
 
 interface EditArticleFormProps {
   postId: string;
   article: ArticleProps;
+  categories: Category[];
 }
 
 export default function EditAritcleForm({
   postId,
   article,
+  categories,
 }: EditArticleFormProps) {
   const editPostWithId = editPost.bind(null, postId);
   const [state, formAction] = useActionState(editPostWithId, initialState);
-  const [categoryId, setCategoryId] = useState("");
-  const [imageKey, setImageKey] = useState("");
-  const [previewUrl, setPreviewUrl] = useState("");
+  const [categoryId, setCategoryId] = useState(article.categoryId);
+  const [imageKey, setImageKey] = useState(article.imageUrl);
+  const [previewUrl, setPreviewUrl] = useState(article.imageUrl);
   const [uploading, setUploading] = useState(false);
 
   async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
@@ -83,6 +95,23 @@ export default function EditAritcleForm({
         <h1 className="text-2xl">Fill out the details to update the article</h1>
 
         <form action={formAction} className="space-y-4">
+          <Select value={categoryId} onValueChange={setCategoryId}>
+            <SelectTrigger className="w-full ">
+              <SelectValue placeholder="Select Category" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                {categories.map((category) => (
+                  <SelectItem key={category.id} value={category.id}>
+                    {category.name}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+
+          <input type="hidden" name="categoryId" value={categoryId} />
+
           <Field>
             <FieldLabel htmlFor="title">Article Title</FieldLabel>
             <Input
@@ -100,12 +129,13 @@ export default function EditAritcleForm({
             <Input
               type="file"
               id="imageKey"
+              accept="image/*"
+              onChange={handleFileUpload}
               required
               className="border-gray-300 focus:outline-none focus:ring-0 focus-visible:ring-0 focus:border-gray-500"
-              defaultValue={article.imageUrl}
             />
 
-            <input type="hidden" name="imageUrl" value="{imageKey}" />
+            <input type="hidden" name="imageUrl" value={imageKey} />
 
             {imageKey && (
               <div className="mt-4">
@@ -146,7 +176,7 @@ export default function EditAritcleForm({
             variant={"default"}
             className="cursor-pointer bg-gray-800 text-white hover:bg-gray-900"
           >
-            Update
+            {uploading ? "Uploading..." : "Update"}
           </Button>
         </form>
       </div>
