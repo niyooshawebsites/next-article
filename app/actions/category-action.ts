@@ -6,10 +6,19 @@ import { revalidatePath } from "next/cache";
 import { Category } from "@/lib/generated/prisma/client";
 import slugify from "slugify";
 
+interface PaginationMeta {
+  page: number;
+  pageSize: number;
+  totalPosts: number;
+  totalPages: number;
+}
+
 interface ActionState {
   success: boolean;
   msg: string;
   category?: Category;
+  data?: [];
+  pagination?: PaginationMeta;
 }
 
 // creating category
@@ -72,7 +81,7 @@ export async function CreateCategory(
   }
 }
 
-// fetch all categories
+// fetch all categories - used on create article page
 export async function fetchAllCategories() {
   try {
     const categories = await prisma.category.findMany();
@@ -87,6 +96,7 @@ export async function fetchAllCategories() {
     return {
       success: false,
       msg: "Failed to fetch categories",
+      data: [],
     };
   }
 }
@@ -120,6 +130,13 @@ export async function fetchCategories({ page = 1, pageSize = 10 }) {
     return {
       success: false,
       msg: "Failed to fetch all categories",
+      data: [],
+      pagination: {
+        page: 1,
+        pageSize,
+        totalPosts: 0,
+        totalPages: 1,
+      },
     };
   }
 }
@@ -204,7 +221,7 @@ export async function deleteCategories(ids: string[]) {
   }
 }
 
-// edit categories
+// edit category
 export async function editCategory(
   id: string,
   prevState: ActionState,

@@ -31,6 +31,7 @@ const initialState = {
 
 export default function CreateArticleForm({ categories }: Props) {
   const [state, formAction] = useActionState(createPost, initialState);
+  const [categoryId, setCategoryId] = useState("");
   const [imageKey, setImageKey] = useState("");
   const [previewUrl, setPreviewUrl] = useState("");
   const [uploading, setUploading] = useState(false);
@@ -44,7 +45,6 @@ export default function CreateArticleForm({ categories }: Props) {
 
     try {
       setUploading(true);
-
       const res = await getPresignedUrl(file.name, file.type);
 
       await axios.put(res.uploadUrl, file, {
@@ -54,8 +54,8 @@ export default function CreateArticleForm({ categories }: Props) {
       });
 
       setImageKey(res.key);
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      console.error(err);
     } finally {
       setUploading(false);
     }
@@ -67,6 +67,7 @@ export default function CreateArticleForm({ categories }: Props) {
 
     if (state.success) {
       setImageKey("");
+      setPreviewUrl(""); // ✅ clear preview
     }
 
     if (state.success) {
@@ -83,7 +84,7 @@ export default function CreateArticleForm({ categories }: Props) {
         <h1 className="text-2xl">Fill out the details to create an article</h1>
 
         <form action={formAction} className="space-y-4">
-          <Select>
+          <Select onValueChange={setCategoryId}>
             <SelectTrigger className="w-full ">
               <SelectValue placeholder="Select Category" />
             </SelectTrigger>
@@ -97,6 +98,8 @@ export default function CreateArticleForm({ categories }: Props) {
               </SelectGroup>
             </SelectContent>
           </Select>
+
+          <input type="hidden" name="categoryId" value={categoryId} />
 
           <Field>
             <FieldLabel htmlFor="title">Article Title</FieldLabel>

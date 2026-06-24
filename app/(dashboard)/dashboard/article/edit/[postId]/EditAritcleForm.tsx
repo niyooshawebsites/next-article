@@ -1,10 +1,14 @@
 "use client";
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { editPost } from "@/app/actions/post-actions";
+import { getPresignedUrl } from "@/app/actions/upload-action";
+import axios from "axios";
+import { toast } from "sonner";
+import Image from "next/image";
 
 const initialState = {
   success: false,
@@ -29,9 +33,49 @@ export default function EditAritcleForm({
 }: EditArticleFormProps) {
   const editPostWithId = editPost.bind(null, postId);
   const [state, formAction] = useActionState(editPostWithId, initialState);
+  const [categoryId, setCategoryId] = useState("");
+  const [imageKey, setImageKey] = useState("");
+  const [previewUrl, setPreviewUrl] = useState("");
+  const [uploading, setUploading] = useState(false);
 
-  const [imageUrl, setImageUrl] = useState(article.imageUrl);
-  const [imageError, setImageError] = useState(false);
+  async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+
+    if (!file) return;
+    setPreviewUrl(URL.createObjectURL(file));
+
+    try {
+      setUploading(true);
+      const res = await getPresignedUrl(file.name, file.type);
+      await axios.put(res.uploadUrl, file, {
+        headers: {
+          "Content-Type": file.type,
+        },
+      });
+      setImageKey(res.key);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setUploading(false);
+    }
+  }
+
+  useEffect((): void => {
+    /* eslint-disable react-hooks/set-state-in-effect */
+    if (!state.success) return;
+
+    if (state.success) {
+      setImageKey("");
+      setPreviewUrl(""); // ✅ clear preview
+    }
+
+    if (state.success) {
+      toast.success(state.msg, { position: "top-center" });
+    } else {
+      toast.error(state.msg, { position: "top-center" });
+    }
+  }, [state, imageKey]);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   return (
     <div className="flex justify-center items-center w-10/12 border border-gray-300 rounded-lg">
@@ -52,37 +96,27 @@ export default function EditAritcleForm({
           </Field>
 
           <Field>
-            <FieldLabel htmlFor="imageUrl">Image Url</FieldLabel>
+            <FieldLabel htmlFor="imageKey">Upload Image</FieldLabel>
             <Input
-              type="text"
-              id="imageUrl"
-              name="imageUrl"
+              type="file"
+              id="imageKey"
               required
               className="border-gray-300 focus:outline-none focus:ring-0 focus-visible:ring-0 focus:border-gray-500"
               defaultValue={article.imageUrl}
-              onChange={(e) => {
-                setImageUrl(e.target.value);
-                setImageError(false);
-              }}
             />
 
-            {imageUrl && (
+            <input type="hidden" name="imageUrl" value="{imageKey}" />
+
+            {imageKey && (
               <div className="mt-4">
-                <img
-                  src={imageUrl}
-                  alt="Article preview"
+                <Image
+                  src={previewUrl}
+                  alt="preview"
                   width={300}
+                  height={200}
                   className="rounded border"
-                  onError={() => setImageError(true)}
                 />
               </div>
-            )}
-
-            {imageError && (
-              <p className="text-red-500 text-sm mt-2">
-                This image cannot be displayed. The URL may be invalid or the
-                remote server may block image loading.
-              </p>
             )}
           </Field>
 

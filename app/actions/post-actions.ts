@@ -4,9 +4,18 @@ import prisma from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 
+interface PaginationMeta {
+  page: number;
+  pageSize: number;
+  totalPosts: number;
+  totalPages: number;
+}
+
 interface ActionState {
   success: boolean;
   msg: string;
+  data?: [];
+  pagination?: PaginationMeta;
 }
 
 // fetching all the articles
@@ -25,6 +34,13 @@ export async function fetchAllPosts(
       return {
         success: false,
         msg: "Unauthorized",
+        data: [],
+        pagination: {
+          page: 1,
+          pageSize,
+          totalPosts: 0,
+          totalPages: 1,
+        },
       };
     }
     const isAdmin = session.user.role === 1;
@@ -75,14 +91,23 @@ export async function fetchAllPosts(
       success: false,
       msg: "Failed to fetch articles",
       data: [],
+      pagination: {
+        page: 1,
+        pageSize,
+        totalPosts: 0,
+        totalPages: 1,
+      },
     };
   }
 }
 
 // fetching published articles
 export async function fetchPusblishedPosts({ page = 1, pageSize = 10 }) {
+  let totalPosts;
+  let publisedPosts;
+
   try {
-    const publisedPosts = await prisma.post.findMany({
+    publisedPosts = await prisma.post.findMany({
       where: {
         published: true,
       },
@@ -93,7 +118,7 @@ export async function fetchPusblishedPosts({ page = 1, pageSize = 10 }) {
       take: pageSize,
     });
 
-    const totalPosts = await prisma.post.count({
+    totalPosts = await prisma.post.count({
       where: {
         published: true,
       },
@@ -115,12 +140,20 @@ export async function fetchPusblishedPosts({ page = 1, pageSize = 10 }) {
     return {
       success: false,
       msg: "Failed to fetched published articles",
+      data: [],
+      pagination: {
+        page,
+        pageSize,
+        totalPosts: 0,
+        totalPages: 1,
+      },
     };
   }
 }
 
 // creating articles
 export async function createPost(prevState: ActionState, formData: FormData) {
+  const categoryId = (formData.get("categoryId") as string)?.trim();
   const title = (formData.get("title") as string)?.trim();
   const imageUrl = (formData.get("imageUrl") as string)?.trim();
   const content = (formData.get("content") as string)?.trim();
@@ -143,6 +176,7 @@ export async function createPost(prevState: ActionState, formData: FormData) {
     // create the post
     await prisma.post.create({
       data: {
+        categoryId,
         title,
         content,
         imageUrl,

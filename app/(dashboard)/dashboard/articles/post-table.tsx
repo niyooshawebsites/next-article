@@ -27,12 +27,12 @@ interface PaginationMeta {
   page: number;
   pageSize: number;
   totalPosts: number;
-  totalpages: number;
+  totalPages: number;
 }
 
 interface Props {
   data: Article[] | [];
-  pagination: PaginationMeta;
+  pagination?: PaginationMeta;
   currentPage: number;
 }
 
@@ -78,7 +78,7 @@ export default function ArticleTable({ data, pagination, currentPage }: Props) {
       {data.length > 0 ? (
         <>
           <Table className="p-3 w-full">
-            <TableHeader className="bg-gray-900 text-white">
+            <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
@@ -97,7 +97,7 @@ export default function ArticleTable({ data, pagination, currentPage }: Props) {
             <TableBody>
               {table.getRowModel().rows.length ? (
                 table.getRowModel().rows.map((row) => (
-                  <TableRow key={row.id} className="bg-gray-100 p-3">
+                  <TableRow key={row.id}>
                     {row.getVisibleCells().map((cell) => (
                       <TableCell key={cell.id}>
                         {flexRender(
@@ -119,7 +119,7 @@ export default function ArticleTable({ data, pagination, currentPage }: Props) {
           </Table>
           <PaginationComp
             currentPage={currentPage}
-            totalPages={pagination.totalpages}
+            totalPages={pagination!.totalPages}
           />
         </>
       ) : (
