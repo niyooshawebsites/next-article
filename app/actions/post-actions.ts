@@ -412,13 +412,14 @@ export async function findArticle(postId: string) {
     return {
       success: true,
       msg: "Article found successfully",
-      post,
+      data: post,
     };
   } catch (err) {
     console.log(err);
     return {
       success: false,
       msg: "Failed to edit article",
+      data: null,
     };
   }
 }
