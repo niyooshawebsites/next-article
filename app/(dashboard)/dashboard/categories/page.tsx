@@ -1,5 +1,5 @@
 import CategoryTable from "./category-table";
-import { fetchAllCategories } from "@/app/actions/category-action";
+import { fetchCategories } from "@/app/actions/category-action";
 
 interface Props {
   searchParams: Promise<{
@@ -12,7 +12,7 @@ export default async function AllCategories({ searchParams }: Props) {
 
   const page = Number(params.page ?? 1);
 
-  const res = await fetchAllCategories({
+  const res = await fetchACategories({
     page,
     pageSize: 10,
   });

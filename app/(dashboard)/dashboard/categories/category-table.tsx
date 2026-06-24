@@ -116,7 +116,7 @@ export default function CategoryTable({
               ) : (
                 <TableRow>
                   <TableCell colSpan={3} className="text-center py-6">
-                    No categories found
+                    No categories found...
                   </TableCell>
                 </TableRow>
               )}

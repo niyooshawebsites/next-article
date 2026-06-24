@@ -15,10 +15,10 @@ import { columns, Article } from "./columns";
 import {
   Table,
   TableHeader,
-  TableFooter,
   TableBody,
   TableRow,
   TableCell,
+  TableHead,
 } from "@/components/ui/table";
 
 import PaginationComp from "@/app/components/PaginationComp";
@@ -77,7 +77,50 @@ export default function ArticleTable({ data, pagination, currentPage }: Props) {
 
       {data.length > 0 ? (
         <>
-          <Table></Table>
+          <Table className="p-3 w-full">
+            <TableHeader className="bg-gray-900 text-white">
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
+                    <TableHead key={header.id}>
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
+                    </TableHead>
+                  ))}
+                </TableRow>
+              ))}
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows.length ? (
+                table.getRowModel().rows.map((row) => (
+                  <TableRow key={row.id} className="bg-gray-100 p-3">
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={3} className="text-center py-6">
+                    No Posts found...
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+          <PaginationComp
+            currentPage={currentPage}
+            totalPages={pagination.totalpages}
+          />
         </>
       ) : (
         <span>No categories...</span>

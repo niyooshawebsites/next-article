@@ -10,15 +10,27 @@ import { getPresignedUrl } from "@/app/actions/upload-action";
 import { toast } from "sonner";
 import Image from "next/image";
 import axios from "axios";
+import type { Category } from "@/lib/generated/prisma/client";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+} from "@/components/ui/select";
+
+interface Props {
+  categories: Category[];
+}
 
 const initialState = {
   success: false,
-  msg: "ghghg",
+  msg: "",
 };
 
-export default function CreateArticleForm() {
+export default function CreateArticleForm({ categories }: Props) {
   const [state, formAction] = useActionState(createPost, initialState);
-
   const [imageKey, setImageKey] = useState("");
   const [previewUrl, setPreviewUrl] = useState("");
   const [uploading, setUploading] = useState(false);
@@ -48,6 +60,7 @@ export default function CreateArticleForm() {
       setUploading(false);
     }
   }
+
   useEffect((): void => {
     /* eslint-disable react-hooks/set-state-in-effect */
     if (!state.success) return;
@@ -70,6 +83,21 @@ export default function CreateArticleForm() {
         <h1 className="text-2xl">Fill out the details to create an article</h1>
 
         <form action={formAction} className="space-y-4">
+          <Select>
+            <SelectTrigger className="w-full ">
+              <SelectValue placeholder="Select Category" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                {categories.map((category) => (
+                  <SelectItem key={category.id} value={category.id}>
+                    {category.name}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+
           <Field>
             <FieldLabel htmlFor="title">Article Title</FieldLabel>
             <Input

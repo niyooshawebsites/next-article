@@ -72,8 +72,27 @@ export async function CreateCategory(
   }
 }
 
+// fetch all categories
+export async function fetchAllCategories() {
+  try {
+    const categories = await prisma.category.findMany();
+
+    return {
+      success: true,
+      msg: "Fetched all categories successfully",
+      data: categories,
+    };
+  } catch (err) {
+    console.log(err);
+    return {
+      success: false,
+      msg: "Failed to fetch categories",
+    };
+  }
+}
+
 // fetching all categories
-export async function fetchAllCategories({ page = 1, pageSize = 10 }) {
+export async function fetchCategories({ page = 1, pageSize = 10 }) {
   try {
     const categories = await prisma.category.findMany({
       orderBy: {
