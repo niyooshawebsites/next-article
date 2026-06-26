@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { deletePosts } from "@/app/actions/post-actions";
+import { SearchArticle } from "@/app/components/SearchArticle";
 
 import {
   flexRender,
@@ -77,6 +78,7 @@ export default function ArticleTable({ data, pagination, currentPage }: Props) {
 
       {data.length > 0 ? (
         <>
+          <SearchArticle />
           <Table className="p-3 w-full">
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (

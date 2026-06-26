@@ -10,7 +10,10 @@ import { Checkbox } from "@/components/ui/checkbox";
 export interface Article {
   id: string;
   title: string;
-  categoryId: string;
+  category: {
+    id: string;
+    name: string;
+  } | null;
   createdAt: Date;
 }
 
@@ -40,8 +43,9 @@ export const columns: ColumnDef<Article>[] = [
     header: "Article Title",
   },
   {
-    accessorKey: "categoryId",
+    accessorKey: "category.name",
     header: "Category",
+    cell: ({ row }) => row.original.category?.name ?? "No Category",
   },
   {
     accessorKey: "createdAt",

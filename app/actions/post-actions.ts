@@ -47,6 +47,14 @@ export async function fetchAllPosts(
 
     if (isAdmin) {
       posts = await prisma.post.findMany({
+        include: {
+          category: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
         orderBy: {
           createdAt: "desc",
         },
@@ -59,6 +67,14 @@ export async function fetchAllPosts(
       posts = await prisma.post.findMany({
         where: {
           authorId: userId,
+        },
+        include: {
+          category: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
         },
         orderBy: {
           createdAt: "desc",
@@ -420,6 +436,164 @@ export async function findArticle(postId: string) {
       success: false,
       msg: "Failed to edit article",
       data: null,
+    };
+  }
+}
+
+// searching an article
+export async function searchDashboardPost(
+  article_details: string,
+  page: number = 1,
+  pageSize: number = 10,
+  userId: string,
+) {
+  try {
+    let posts;
+    let totalPosts;
+
+    const session = await auth();
+
+    if (!session?.user?.id) {
+      return {
+        success: false,
+        msg: "Unauthorized",
+        data: [],
+        pagination: {
+          page: 1,
+          pageSize,
+          totalPosts: 0,
+          totalPages: 1,
+        },
+      };
+    }
+
+    const isAdmin = session.user.role === 1;
+
+    if (isAdmin) {
+      posts = await prisma.post.findMany({
+        include: {
+          category: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+        where: {
+          title: {
+            contains: article_details,
+            mode: "insensitive",
+          },
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+      });
+
+      totalPosts = await prisma.post.count({
+        where: {
+          title: {
+            contains: article_details,
+            mode: "insensitive",
+          },
+        },
+      });
+
+      if (totalPosts === 0) {
+        return {
+          success: true,
+          msg: "No articles found",
+          data: [],
+          pagination: {
+            page: 1,
+            pageSize,
+            totalPosts: 0,
+            totalPages: 1,
+          },
+        };
+      }
+
+      return {
+        success: true,
+        msg: "Successfully fetched articles",
+        data: posts,
+        pagination: {
+          page,
+          pageSize,
+          totalPosts,
+          totalPages: Math.ceil(totalPosts / pageSize) || 1,
+        },
+      };
+    } else {
+      posts = await prisma.post.findMany({
+        include: {
+          category: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+        where: {
+          id: userId,
+          title: {
+            contains: article_details,
+            mode: "insensitive",
+          },
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+      });
+
+      totalPosts = await prisma.post.count({
+        where: {
+          id: userId,
+          title: {
+            contains: article_details,
+            mode: "insensitive",
+          },
+        },
+      });
+
+      if (totalPosts === 0) {
+        return {
+          success: true,
+          msg: "No articles found",
+          data: [],
+          pagination: {
+            page: 1,
+            pageSize,
+            totalPosts: 0,
+            totalPages: 1,
+          },
+        };
+      }
+
+      return {
+        success: true,
+        msg: "Successfully fetched articles",
+        data: posts,
+        pagination: {
+          page,
+          pageSize,
+          totalPosts,
+          totalPages: Math.ceil(totalPosts / pageSize) || 1,
+        },
+      };
+    }
+  } catch (err) {
+    console.log(err);
+    return {
+      success: false,
+      msg: "No article found",
+      data: [],
+      pagination: {
+        page: 1,
+        pageSize,
+        totalPosts: 0,
+        totalPages: 1,
+      },
     };
   }
 }
