@@ -4,7 +4,12 @@ import { Input } from "@/components/ui/input";
 export function SearchArticle() {
   return (
     <form action={"/dashboard/articles"} className="flex gap-2">
-      <Input type="text" placeholder="Search Post" name="article_details" />
+      <Input
+        type="text"
+        placeholder="Search Post"
+        name="article_details"
+        required
+      />
       <Button type="submit" variant="secondary">
         Search
       </Button>

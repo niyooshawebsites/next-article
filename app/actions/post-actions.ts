@@ -597,3 +597,140 @@ export async function searchDashboardPost(
     };
   }
 }
+
+export async function filterPostByCatetory(
+  categoryId: string,
+  page: number = 1,
+  pageSize: number = 10,
+  userId: string,
+) {
+  let posts;
+  let totalPosts;
+  const session = await auth();
+
+  if (!session?.user.id) {
+    return {
+      success: true,
+      msg: "Aunthorized",
+      data: [],
+      pagination: {
+        page: 1,
+        pageSize,
+        totalPosts: 0,
+        totalPages: 0,
+      },
+    };
+  }
+
+  const isAdmin = session.user.role === 1;
+
+  try {
+    if (isAdmin) {
+      posts = await prisma.post.findMany({
+        include: {
+          category: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+        where: {
+          categoryId,
+        },
+      });
+
+      if (posts.length == 0) {
+        return {
+          success: true,
+          msg: "No articles found",
+          data: [],
+          pagination: {
+            page: 1,
+            pageSize,
+            totalPosts: 0,
+            totalPages: 0,
+          },
+        };
+      }
+
+      totalPosts = await prisma.post.count({
+        where: {
+          categoryId,
+        },
+      });
+
+      return {
+        success: true,
+        msg: "Posts fetched succesfully",
+        data: posts,
+        pagination: {
+          page,
+          pageSize,
+          totalPosts,
+          totalPages: Math.ceil(totalPosts / pageSize) || 1,
+        },
+      };
+    } else {
+      posts = await prisma.post.findMany({
+        include: {
+          category: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+        where: {
+          categoryId,
+          authorId: userId,
+        },
+      });
+
+      if (posts.length == 0) {
+        return {
+          success: true,
+          msg: "No articles found",
+          data: [],
+          pagination: {
+            page: 1,
+            pageSize,
+            totalPosts: 0,
+            totalPages: 0,
+          },
+        };
+      }
+
+      totalPosts = await prisma.post.count({
+        where: {
+          categoryId,
+        },
+      });
+
+      return {
+        success: true,
+        msg: "Successfully fetched articles",
+        data: posts,
+        pagination: {
+          page,
+          pageSize,
+          totalPosts,
+          totalPages: Math.ceil(totalPosts / pageSize) || 1,
+        },
+      };
+    }
+  } catch (err) {
+    console.log(err);
+    return {
+      success: false,
+      msg: "Failed to fetch posts",
+      data: [],
+      pagination: {
+        page: 1,
+        pageSize,
+        totalPosts: 0,
+        totalPages: 0,
+      },
+    };
+  }
+}

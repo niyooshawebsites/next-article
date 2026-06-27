@@ -3,6 +3,8 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { deletePosts } from "@/app/actions/post-actions";
 import { SearchArticle } from "@/app/components/SearchArticle";
+import { FilterByCategory } from "@/app/components/FilterByCategory";
+import type { Category } from "@/lib/generated/prisma/client";
 
 import {
   flexRender,
@@ -32,12 +34,18 @@ interface PaginationMeta {
 }
 
 interface Props {
-  data: Article[] | [];
+  data: Article[];
   pagination?: PaginationMeta;
   currentPage: number;
+  categories: Category[] | [];
 }
 
-export default function ArticleTable({ data, pagination, currentPage }: Props) {
+export default function ArticleTable({
+  data,
+  pagination,
+  currentPage,
+  categories,
+}: Props) {
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
   const table = useReactTable({
@@ -78,7 +86,11 @@ export default function ArticleTable({ data, pagination, currentPage }: Props) {
 
       {data.length > 0 ? (
         <>
-          <SearchArticle />
+          <div className="flex gap-2">
+            <FilterByCategory categories={categories} />
+            <SearchArticle />
+          </div>
+
           <Table className="p-3 w-full">
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (
