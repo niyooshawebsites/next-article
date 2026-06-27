@@ -535,7 +535,7 @@ export async function searchDashboardPost(
           },
         },
         where: {
-          id: userId,
+          authorId: userId,
           title: {
             contains: article_details,
             mode: "insensitive",
@@ -548,7 +548,7 @@ export async function searchDashboardPost(
 
       totalPosts = await prisma.post.count({
         where: {
-          id: userId,
+          authorId: userId,
           title: {
             contains: article_details,
             mode: "insensitive",

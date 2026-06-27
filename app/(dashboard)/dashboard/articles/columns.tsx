@@ -50,6 +50,8 @@ export const columns: ColumnDef<Article>[] = [
   {
     accessorKey: "createdAt",
     header: "Published on",
+    cell: ({ row }) =>
+      new Date(row.original.createdAt).toString().split(" GMT")[0],
   },
   {
     id: "actions",
