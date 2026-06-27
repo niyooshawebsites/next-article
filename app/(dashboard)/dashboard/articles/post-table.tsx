@@ -86,7 +86,7 @@ export default function ArticleTable({
 
       {data.length > 0 ? (
         <>
-          <div className="flex gap-2">
+          <div className="flex gap-2 mb-5">
             <FilterByCategory categories={categories} />
             <SearchArticle />
           </div>

@@ -4,6 +4,8 @@ import AppSidebar from "../components/AppSidebar";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import "../globals.css";
+import { auth } from "@/lib/auth";
+import { SessionProvider } from "next-auth/react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,31 +17,34 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export default function DashboardLayout({
+export default async function DashboardLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await auth();
   return (
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <div>
-          <TooltipProvider>
-            <SidebarProvider>
-              <div className=" bg-gray-50">
-                <AppSidebar />
-              </div>
-              <main className="w-full p-3">
-                <SidebarTrigger />
-                {children}
-                <Toaster />
-              </main>
-            </SidebarProvider>
-          </TooltipProvider>
-        </div>
+        <SessionProvider session={session}>
+          <div>
+            <TooltipProvider>
+              <SidebarProvider>
+                <div className=" bg-gray-50">
+                  <AppSidebar />
+                </div>
+                <main className="w-full p-3">
+                  <SidebarTrigger />
+                  {children}
+                  <Toaster />
+                </main>
+              </SidebarProvider>
+            </TooltipProvider>
+          </div>
+        </SessionProvider>
       </body>
     </html>
   );
