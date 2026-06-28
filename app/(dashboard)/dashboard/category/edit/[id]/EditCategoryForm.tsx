@@ -6,6 +6,11 @@ import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { editCategory } from "@/app/actions/category-action";
 
+const initialState = {
+  success: false,
+  msg: "",
+};
+
 export default function EditCategoryForm() {
   return <div>EditCategoryForm</div>;
 }
