@@ -5,8 +5,14 @@ import { signIn } from "next-auth/react";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { registerUser } from "@/app/actions/auth-actions";
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import Link from "next/link";
+import { EyeOffIcon, EyeIcon } from "lucide-react";
+import {
+  InputGroup,
+  InputGroupInput,
+  InputGroupAddon,
+} from "@/components/ui/input-group";
 
 const initialState = {
   success: false,
@@ -15,6 +21,7 @@ const initialState = {
 
 export default function RegisterForm() {
   const [state, formAction] = useActionState(registerUser, initialState);
+  const [showPassword, setShowPassword] = useState(false);
 
   return (
     <div className="flex justify-center items-center w-3/12 border border-gray-300 rounded-lg">
@@ -49,12 +56,27 @@ export default function RegisterForm() {
 
           <Field>
             <FieldLabel htmlFor="password">Password</FieldLabel>
-            <Input
-              type="password"
-              id="password"
-              name="password"
-              placeholder="***************"
-            />
+            <InputGroup>
+              <InputGroupInput
+                type={showPassword ? "text" : "password"}
+                id="password"
+                name="password"
+                placeholder="*************"
+              />
+              <InputGroupAddon align="inline-end">
+                {showPassword ? (
+                  <EyeOffIcon
+                    className="cursor-pointer"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                  />
+                ) : (
+                  <EyeIcon
+                    className="cursor-pointer"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                  />
+                )}
+              </InputGroupAddon>
+            </InputGroup>
           </Field>
 
           {state.success ? (
