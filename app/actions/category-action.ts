@@ -276,3 +276,35 @@ export async function editCategory(
     };
   }
 }
+
+// fetch category
+export async function fetchCategory(id: string) {
+  try {
+    const category = await prisma.category.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!category) {
+      return {
+        success: true,
+        msg: "No such catetory exists",
+        data: null,
+      };
+    }
+
+    return {
+      success: true,
+      msg: "Category fetched successfully",
+      data: category,
+    };
+  } catch (err) {
+    console.log(err);
+    return {
+      success: false,
+      msg: "Failed to fetch category",
+      data: null,
+    };
+  }
+}

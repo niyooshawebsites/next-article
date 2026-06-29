@@ -81,7 +81,7 @@ export default function CategoryTable({
 
       {data.length > 0 ? (
         <>
-          <Table className="p-3 w-full md:w-3/12">
+          <Table className="p-3 w-full md:w-4/12">
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>

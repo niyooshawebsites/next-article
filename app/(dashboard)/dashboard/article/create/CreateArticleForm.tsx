@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import CustomEditor from "@/app/components/CustomEditor";
 import { useActionState, useState, useEffect } from "react";
 import { createPost } from "@/app/actions/post-actions";
 import { getPresignedUrl } from "@/app/actions/upload-action";
@@ -35,6 +36,7 @@ export default function CreateArticleForm({ categories }: Props) {
   const [imageKey, setImageKey] = useState("");
   const [previewUrl, setPreviewUrl] = useState("");
   const [uploading, setUploading] = useState(false);
+  const [content, setContent] = useState("");
 
   async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -140,12 +142,15 @@ export default function CreateArticleForm({ categories }: Props) {
 
           <Field>
             <FieldLabel htmlFor="content">Article Content</FieldLabel>
-            <Textarea
+            {/* <Textarea
               id="content"
               name="content"
               required
               className="h-96 border-gray-300 focus:outline-none focus:ring-0 focus-visible:ring-0 focus:border-gray-500"
-            />
+            /> */}
+            <CustomEditor value={content} onChange={setContent} />
+
+            <input type="hidden" name="content" value={content} />
           </Field>
 
           <Button
