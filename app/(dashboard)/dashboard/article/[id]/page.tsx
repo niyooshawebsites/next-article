@@ -1,5 +1,45 @@
-import React from "react";
+import { BlogHeader } from "@/app/components/BlogHeader";
+import { BlogContent } from "@/app/components/BlogContent";
+import { findArticle } from "@/app/actions/post-actions";
+import { getSignedImageUrl } from "@/app/actions/fetch-file-action";
 
-export default function page() {
-  return <div>page</div>;
+interface Props {
+  params: Promise<{
+    id: string;
+  }>;
+}
+
+export default async function page({ params }: Props) {
+  const { id } = await params;
+  const articleId = id;
+
+  if (!articleId) {
+    return <div>No Article Id</div>;
+  }
+
+  const res = await findArticle(id);
+  const article = res.data;
+
+  if (!article) {
+    return <div>Article not found</div>;
+  }
+
+  const articleWithSignedUrl = {
+    ...article,
+    imageUrl: await getSignedImageUrl(article.imageUrl),
+  };
+
+  return (
+    <main className="flex flex-col space-y-3">
+      <BlogHeader
+        title={articleWithSignedUrl.title}
+        category={articleWithSignedUrl.category!.name}
+        authorName={articleWithSignedUrl.author.name}
+        authorEmail={articleWithSignedUrl.author.email}
+        imageUrl={articleWithSignedUrl.imageUrl}
+        createdAt={articleWithSignedUrl.createdAt}
+      />
+      <BlogContent content={articleWithSignedUrl.content} />
+    </main>
+  );
 }

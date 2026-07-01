@@ -1,5 +1,6 @@
 "use server";
 
+import DOMPurify from "isomorphic-dompurify";
 import prisma from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
@@ -172,7 +173,9 @@ export async function createPost(prevState: ActionState, formData: FormData) {
   const categoryId = (formData.get("categoryId") as string)?.trim();
   const title = (formData.get("title") as string)?.trim();
   const imageUrl = (formData.get("imageUrl") as string)?.trim();
-  const content = (formData.get("content") as string)?.trim();
+  const content = DOMPurify.sanitize(
+    (formData.get("content") as string)?.trim(),
+  );
   const session = await auth();
 
   if (!session?.user?.id) {
@@ -415,6 +418,19 @@ export async function findArticle(postId: string) {
     const post = await prisma.post.findUnique({
       where: {
         id: postId,
+      },
+      include: {
+        author: {
+          select: {
+            name: true,
+            email: true,
+          },
+        },
+        category: {
+          select: {
+            name: true,
+          },
+        },
       },
     });
 
