@@ -15,6 +15,7 @@ export interface Article {
     id: string;
     name: string;
   } | null;
+  published: boolean;
   createdAt: Date;
 }
 
@@ -23,8 +24,21 @@ function ActionCell({ post }: { post: Article }) {
 
   return (
     <div className="flex justify-center gap-2">
+      <Link href={`/dashboard/article/${post.id}`}>
+        <Button
+          size="sm"
+          variant="outline"
+          className="text-blue-700 bg-blue-50 cursor-pointer hover:bg-blue-100 hover:text-blue-700"
+        >
+          View
+        </Button>
+      </Link>
       <Link href={`/dashboard/article/edit/${post.id}`}>
-        <Button size="sm" variant="outline" className="bg-blue-100">
+        <Button
+          size="sm"
+          variant="outline"
+          className="text-gray-700 bg-gray-50 cursor-pointer hover:bg-gray-100 hover:text-gray-700"
+        >
           Edit
         </Button>
       </Link>
@@ -68,9 +82,14 @@ export const columns: ColumnDef<Article>[] = [
   },
   {
     accessorKey: "createdAt",
-    header: "Published on",
+    header: "Created At",
     cell: ({ row }) =>
       new Date(row.original.createdAt).toString().split(" GMT")[0],
+  },
+  {
+    accessorKey: "published",
+    header: "Published",
+    cell: ({ row }) => (row.original.published ? "Yes" : "No"),
   },
   {
     id: "actions",
