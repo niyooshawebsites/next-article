@@ -1,17 +1,16 @@
 import DOMPurify from "isomorphic-dompurify";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/card";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { togglePostStatus } from "../actions/post-actions";
 
 interface Props {
+  id: string;
   content: string;
 }
 
-export function BlogContent({ content }: Props) {
+export function BlogContent({ id, content }: Props) {
   const cleanContent = DOMPurify.sanitize(content);
+
   return (
     <Card>
       <CardContent>

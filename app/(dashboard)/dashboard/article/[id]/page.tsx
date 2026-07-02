@@ -39,7 +39,10 @@ export default async function page({ params }: Props) {
         imageUrl={articleWithSignedUrl.imageUrl}
         createdAt={articleWithSignedUrl.createdAt}
       />
-      <BlogContent content={articleWithSignedUrl.content} />
+      <BlogContent
+        id={articleWithSignedUrl.id}
+        content={articleWithSignedUrl.content}
+      />
     </main>
   );
 }

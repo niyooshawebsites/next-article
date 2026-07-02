@@ -32,7 +32,7 @@ export function BlogHeader({
         <div className="flex items-center gap-3">
           <Avatar>
             <AvatarImage src="avatar.jgg" />
-            <AvatarFallback>AJ</AvatarFallback>
+            <AvatarFallback>U</AvatarFallback>
           </Avatar>
 
           <div>
@@ -47,7 +47,7 @@ export function BlogHeader({
       </div>
 
       <div className="relative mt-10 aspect-video overflow-hidden rounded-xl">
-        <Image src={imageUrl} alt="Image" fill />
+        <Image src={imageUrl} alt={title} fill />
       </div>
     </section>
   );
