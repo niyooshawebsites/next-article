@@ -18,7 +18,7 @@ import { UserCheck, UserPlus } from "lucide-react";
 
 export default function Header() {
   return (
-    <header className="flex justify-between items-center px-3 py-2 bg-gray-100">
+    <header className="flex justify-between items-center rounded-md px-3 py-2 bg-gray-100 w-full">
       <div>
         <Link href="/">
           <h1 className="yesteryear-regular text-4xl" style={{}}>
