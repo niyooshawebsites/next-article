@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Pagination,
   PaginationContent,
@@ -7,6 +9,7 @@ import {
   PaginationPrevious,
   PaginationEllipsis,
 } from "@/components/ui/pagination";
+import { usePathname, useSearchParams } from "next/navigation";
 
 interface PaginationProps {
   currentPage: number;
@@ -17,7 +20,18 @@ export default function PaginationComp({
   currentPage,
   totalPages,
 }: PaginationProps) {
-  // Build visible pages
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const createPageURL = (page: number) => {
+    const params = new URLSearchParams(searchParams.toString());
+
+    params.set("page", page.toString());
+
+    return `${pathname}?${params.toString()}`;
+  };
+
+  // Build visible page numbers
   const pageNumbers: number[] = [];
 
   for (let i = 1; i <= totalPages; i++) {
@@ -47,10 +61,12 @@ export default function PaginationComp({
         {/* Previous */}
         {currentPage > 1 && (
           <PaginationItem>
-            <PaginationPrevious href={`?page=${currentPage - 1}`} />
+            <PaginationPrevious href={createPageURL(currentPage - 1)} />
           </PaginationItem>
-        )}{" "}
-        Page
+        )}
+
+        <span className="px-2 text-sm">Page</span>
+
         {/* Page Numbers */}
         {items.map((item, index) => (
           <PaginationItem key={index}>
@@ -58,7 +74,7 @@ export default function PaginationComp({
               <PaginationEllipsis />
             ) : (
               <PaginationLink
-                href={`?page=${item}`}
+                href={createPageURL(item)}
                 isActive={item === currentPage}
               >
                 {item < 10 ? `0${item}` : item}
@@ -66,11 +82,15 @@ export default function PaginationComp({
             )}
           </PaginationItem>
         ))}
-        of {totalPages < 10 ? `0${totalPages}` : totalPages} Pages
+
+        <span className="px-2 text-sm">
+          of {totalPages < 10 ? `0${totalPages}` : totalPages} Pages
+        </span>
+
         {/* Next */}
         {currentPage < totalPages && (
           <PaginationItem>
-            <PaginationNext href={`?page=${currentPage + 1}`} />
+            <PaginationNext href={createPageURL(currentPage + 1)} />
           </PaginationItem>
         )}
       </PaginationContent>

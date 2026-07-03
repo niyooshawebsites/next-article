@@ -614,6 +614,7 @@ export async function searchDashboardPost(
   }
 }
 
+// filter post by category
 export async function filterPostByCatetory(
   categoryId: string,
   page: number = 1,
@@ -735,6 +736,78 @@ export async function filterPostByCatetory(
         },
       };
     }
+  } catch (err) {
+    console.log(err);
+    return {
+      success: false,
+      msg: "Failed to fetch posts",
+      data: [],
+      pagination: {
+        page: 1,
+        pageSize,
+        totalPosts: 0,
+        totalPages: 0,
+      },
+    };
+  }
+}
+
+// filter post by category
+export async function fetchPostsByCatetory(
+  categoryId: string,
+  page: number = 1,
+  pageSize: number = 10,
+) {
+  let posts;
+  let totalPosts;
+
+  try {
+    posts = await prisma.post.findMany({
+      include: {
+        category: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+      where: {
+        categoryId,
+        published: true,
+      },
+    });
+
+    if (posts.length == 0) {
+      return {
+        success: true,
+        msg: "No articles found",
+        data: [],
+        pagination: {
+          page: 1,
+          pageSize,
+          totalPosts: 0,
+          totalPages: 0,
+        },
+      };
+    }
+
+    totalPosts = await prisma.post.count({
+      where: {
+        categoryId,
+      },
+    });
+
+    return {
+      success: true,
+      msg: "Posts fetched succesfully",
+      data: posts,
+      pagination: {
+        page,
+        pageSize,
+        totalPosts,
+        totalPages: Math.ceil(totalPosts / pageSize) || 1,
+      },
+    };
   } catch (err) {
     console.log(err);
     return {

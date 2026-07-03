@@ -2,7 +2,6 @@ import Link from "next/link";
 import {
   Sidebar,
   SidebarHeader,
-  SidebarFooter,
   SidebarGroup,
   SidebarContent,
   SidebarGroupContent,

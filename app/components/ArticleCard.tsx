@@ -44,14 +44,14 @@ export default function ArticleCard({
           <Badge variant={"secondary"}>{badge}</Badge>
         </CardAction>
         <CardTitle>{title}</CardTitle>
-        <CardDescription className="line-clamp-3">
-          <div
-            dangerouslySetInnerHTML={{
-              __html: cleanContent,
-            }}
-          />
-        </CardDescription>
       </CardHeader>
+      <CardDescription className="line-clamp-3 px-3">
+        <div
+          dangerouslySetInnerHTML={{
+            __html: cleanContent,
+          }}
+        />
+      </CardDescription>
       <CardFooter>
         <Button
           className="w-full bg-gray-800 text-white hover:bg-gray-900 cursor-pointer"
