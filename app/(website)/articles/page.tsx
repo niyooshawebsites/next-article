@@ -43,6 +43,7 @@ export default async function PublishedBlogs({ searchParams }: Props) {
               title={post.title}
               description={post.content}
               imageLink={post.imageUrl}
+              id={post.id}
             />
           );
         })}

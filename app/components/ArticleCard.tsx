@@ -1,3 +1,6 @@
+"use client";
+
+import DOMPurify from "isomorphic-dompurify";
 import {
   Card,
   CardAction,
@@ -8,12 +11,14 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 interface Post {
   badge: string;
   title: string;
   description: string;
   imageLink: string;
+  id: string;
 }
 
 export default function ArticleCard({
@@ -21,7 +26,11 @@ export default function ArticleCard({
   title,
   description,
   imageLink,
+  id,
 }: Post) {
+  const cleanContent = DOMPurify.sanitize(description);
+  const router = useRouter();
+
   return (
     <Card className="relative mx-auto w-full max-w-sm pt-0 border-0 self-start">
       <img
@@ -29,19 +38,25 @@ export default function ArticleCard({
         alt="Event cover"
         className="relative z-20 aspect-video w-full object-cover"
       />
+
       <CardHeader className="">
         <CardAction>
           <Badge variant={"secondary"}>{badge}</Badge>
         </CardAction>
         <CardTitle>{title}</CardTitle>
         <CardDescription className="line-clamp-3">
-          {description}
+          <div
+            dangerouslySetInnerHTML={{
+              __html: cleanContent,
+            }}
+          />
         </CardDescription>
       </CardHeader>
       <CardFooter>
         <Button
           className="w-full bg-gray-800 text-white hover:bg-gray-900 cursor-pointer"
           variant={"secondary"}
+          onClick={() => router.push(`/article/${id}`)}
         >
           View more
         </Button>

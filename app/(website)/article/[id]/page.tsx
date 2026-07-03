@@ -30,7 +30,7 @@ export default async function page({ params }: Props) {
   };
 
   return (
-    <main className="flex flex-col space-y-3">
+    <main className="flex flex-col space-y-3 p-5">
       <BlogHeader
         title={articleWithSignedUrl.title}
         category={articleWithSignedUrl.category!.name}
