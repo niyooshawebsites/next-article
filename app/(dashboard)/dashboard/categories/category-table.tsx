@@ -22,12 +22,14 @@ import {
 } from "@/components/ui/table";
 
 import PaginationComp from "@/app/components/PaginationComp";
+import SearchCategory from "@/app/components/SearchCategory";
 
 interface PaginationMeta {
   page: number;
   pageSize: number;
   totalCategories: number;
   totalPages: number;
+  totalPosts?: number;
 }
 
 interface Props {
@@ -81,6 +83,9 @@ export default function CategoryTable({
 
       {data.length > 0 ? (
         <>
+          <div className="flex gap-2 mb-5">
+            <SearchCategory />
+          </div>
           <Table className="p-3 w-full md:w-4/12">
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (

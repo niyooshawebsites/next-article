@@ -1,18 +1,22 @@
 import CategoryTable from "./category-table";
-import { fetchCategories } from "@/app/actions/category-action";
+import {
+  fetchCategoriesForDashboard,
+  searchCategoryForDashbaord,
+} from "@/app/actions/category-action";
 
 interface Props {
   searchParams: Promise<{
+    category?: string;
     page?: string;
   }>;
 }
 
 export default async function AllCategories({ searchParams }: Props) {
   const params = await searchParams;
-
+  const category = params.category ?? null;
   const page = Number(params.page ?? 1);
 
-  const res = await fetchCategories({
+  const res = await fetchCategoriesForDashboard({
     page,
     pageSize: 10,
   });

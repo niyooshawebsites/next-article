@@ -1,4 +1,4 @@
-import { fetchPostsByCatetory } from "@/app/actions/post-actions";
+import { fetchPostsByCatetoryForWebsite } from "@/app/actions/post-actions";
 import { getSignedImageUrl } from "@/app/actions/fetch-file-action";
 import ArticleCard from "@/app/components/ArticleCard";
 import PaginationComp from "@/app/components/PaginationComp";
@@ -18,7 +18,7 @@ export default async function page({ params, searchParams }: Props) {
   const currentPage = Number(page) || 1;
   const pagesize = 10;
 
-  const res = await fetchPostsByCatetory(id, currentPage, pagesize);
+  const res = await fetchPostsByCatetoryForWebsite(id, currentPage, pagesize);
   const posts = res.data;
   const totalPages = res.pagination.totalPages;
 

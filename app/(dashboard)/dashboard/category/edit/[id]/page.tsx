@@ -1,4 +1,4 @@
-import { fetchCategory } from "@/app/actions/category-action";
+import { fetchCategoryForEditForDashboard } from "@/app/actions/category-action";
 import EditCategoryForm from "./EditCategoryForm";
 
 interface Props {
@@ -10,7 +10,7 @@ interface Props {
 export default async function page({ params }: Props) {
   const { id } = await params;
 
-  const res = await fetchCategory(id);
+  const res = await fetchCategoryForEditForDashboard(id);
 
   const category = res.data;
 

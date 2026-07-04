@@ -2,7 +2,7 @@ import PostTable from "./post-table";
 import {
   fetchAllPosts,
   searchDashboardPost,
-  filterPostByCatetory,
+  filterPostsByCatetoryForDashboard,
   fitlerPostsByCategoryAndSearchTermForDashboard,
 } from "@/app/actions/post-actions";
 import { fetchAllCategories } from "@/app/actions/category-action";
@@ -41,7 +41,7 @@ export default async function AllArticles({ searchParams }: Props) {
     payload = response.data ?? [];
     pagination = response.pagination;
   } else if (cid && page && userId) {
-    const response = await filterPostByCatetory(cid, page, 10, userId);
+    const response = await filterPostsByCatetoryForDashboard(cid, page, 10, userId);
     payload = response.data ?? [];
     pagination = response.pagination;
   } else if (article_details && page && userId) {

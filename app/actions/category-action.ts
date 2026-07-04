@@ -101,8 +101,8 @@ export async function fetchAllCategories() {
   }
 }
 
-// fetching all categories
-export async function fetchCategories({ page = 1, pageSize = 10 }) {
+// fetching all categories for category table
+export async function fetchCategoriesForDashboard({ page = 1, pageSize = 10 }) {
   try {
     const categories = await prisma.category.findMany({
       orderBy: {
@@ -112,7 +112,22 @@ export async function fetchCategories({ page = 1, pageSize = 10 }) {
       take: pageSize,
     });
 
-    const totalCategories = await prisma.category.count();
+    if (categories.length == 0) {
+      return {
+        success: true,
+        msg: "No category found",
+        data: [],
+        pagination: {
+          page: 1,
+          pageSize,
+          totalCategories: 0,
+          totalPosts: 0,
+          totalPages: 1,
+        },
+      };
+    }
+
+    const totalCategories = categories.length;
 
     return {
       success: true,
@@ -134,6 +149,7 @@ export async function fetchCategories({ page = 1, pageSize = 10 }) {
       pagination: {
         page: 1,
         pageSize,
+        totalCategories: 0,
         totalPosts: 0,
         totalPages: 1,
       },
@@ -277,8 +293,8 @@ export async function editCategory(
   }
 }
 
-// fetch category
-export async function fetchCategory(id: string) {
+// fetch category for edit for dashboard
+export async function fetchCategoryForEditForDashboard(id: string) {
   try {
     const category = await prisma.category.findUnique({
       where: {
@@ -305,6 +321,58 @@ export async function fetchCategory(id: string) {
       success: false,
       msg: "Failed to fetch category",
       data: null,
+    };
+  }
+}
+
+// search a category for the dashboard
+export async function searchCategoryForDashbaord(id: string) {
+  try {
+    const category = await prisma.category.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!category) {
+      return {
+        success: true,
+        msg: "No category found",
+        data: [],
+        pagination: {
+          page: 1,
+          pageSize: 10,
+          totalCategories: 0,
+          totalPosts: 0,
+          totalPages: 1,
+        },
+      };
+    }
+
+    return {
+      success: true,
+      msg: "Categories fetched successfully",
+      data: [category],
+      pagination: {
+        page: 1,
+        pageSize: 10,
+        totalCategories: 1,
+        totalPages: 1,
+      },
+    };
+  } catch (err) {
+    console.log(err);
+    return {
+      success: false,
+      msg: "Faile to search the category",
+      data: [],
+      pagination: {
+        page: 1,
+        pageSize: 10,
+        totalCategories: 0,
+        totalPosts: 0,
+        totalPages: 1,
+      },
     };
   }
 }

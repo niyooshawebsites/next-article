@@ -623,7 +623,7 @@ export async function searchDashboardPost(
 }
 
 // filter post by category
-export async function filterPostByCatetory(
+export async function filterPostsByCatetoryForDashboard(
   categoryId: string,
   page: number = 1,
   pageSize: number = 10,
@@ -892,8 +892,8 @@ export async function fitlerPostsByCategoryAndSearchTermForDashboard(
   }
 }
 
-// filter post by category
-export async function fetchPostsByCatetory(
+// fetch posts by category for website
+export async function fetchPostsByCatetoryForWebsite(
   categoryId: string,
   page: number = 1,
   pageSize: number = 10,
