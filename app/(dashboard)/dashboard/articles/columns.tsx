@@ -89,7 +89,14 @@ export const columns: ColumnDef<Article>[] = [
   {
     accessorKey: "published",
     header: "Published",
-    cell: ({ row }) => (row.original.published ? "Yes" : "No"),
+    cell: ({ row }) =>
+      row.original.published ? (
+        <span className="bg-green-500 px-2 py-1 rounded-md text-white">
+          Yes
+        </span>
+      ) : (
+        <span className="bg-red-500 px-2 py-1 text-white rounded-md">No</span>
+      ),
   },
   {
     id: "actions",

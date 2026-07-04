@@ -18,8 +18,6 @@ export default async function page({ params, searchParams }: Props) {
   const currentPage = Number(page) || 1;
   const pagesize = 10;
 
-  console.log(id);
-
   const res = await fetchPostsByCatetory(id, currentPage, pagesize);
   const posts = res.data;
   const totalPages = res.pagination.totalPages;

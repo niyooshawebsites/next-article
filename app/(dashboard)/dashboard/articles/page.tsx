@@ -3,6 +3,7 @@ import {
   fetchAllPosts,
   searchDashboardPost,
   filterPostByCatetory,
+  fitlerPostsByCategoryAndSearchTermForDashboard,
 } from "@/app/actions/post-actions";
 import { fetchAllCategories } from "@/app/actions/category-action";
 import { auth } from "@/lib/auth";
@@ -16,45 +17,46 @@ interface Props {
 }
 
 export default async function AllArticles({ searchParams }: Props) {
+  let payload;
+  let pagination;
   const params = await searchParams;
   const page = Number(params.page ?? 1);
   const article_details = params.article_details;
   const cid = params.category;
 
   const session = await auth();
-
   const userId = session?.user.id;
-
   if (!userId) return;
 
-  const postResponse = await fetchAllPosts(page, 10, userId);
+  const categoryResponse = await fetchAllCategories();
 
-  let searchPostResponse;
-  if (article_details) {
-    searchPostResponse = await searchDashboardPost(
+  if (cid && article_details && page && userId) {
+    const response = await fitlerPostsByCategoryAndSearchTermForDashboard(
+      cid,
       article_details,
       page,
       10,
       userId,
     );
-  }
-
-  const categoryResponse = await fetchAllCategories();
-
-  let filterCategoryResponse;
-
-  if (cid) {
-    filterCategoryResponse = await filterPostByCatetory(cid, page, 10, userId);
-  }
-
-  let payload;
-
-  if (article_details) {
-    payload = searchPostResponse!.data ?? [];
-  } else if (cid) {
-    payload = filterCategoryResponse!.data ?? [];
+    payload = response.data ?? [];
+    pagination = response.pagination;
+  } else if (cid && page && userId) {
+    const response = await filterPostByCatetory(cid, page, 10, userId);
+    payload = response.data ?? [];
+    pagination = response.pagination;
+  } else if (article_details && page && userId) {
+    const response = await searchDashboardPost(
+      article_details,
+      page,
+      10,
+      userId,
+    );
+    payload = response.data ?? [];
+    pagination = response.pagination;
   } else {
-    payload = postResponse.data ?? [];
+    const response = await fetchAllPosts(page, 10, userId);
+    payload = response.data ?? [];
+    pagination = response.pagination;
   }
 
   return (
@@ -62,11 +64,7 @@ export default async function AllArticles({ searchParams }: Props) {
       <h1 className="mb-4 text-2xl font-bold">All Articles</h1>
       <PostTable
         data={payload}
-        pagination={
-          searchPostResponse
-            ? searchPostResponse.pagination
-            : postResponse.pagination
-        }
+        pagination={pagination}
         currentPage={page}
         categories={categoryResponse?.data || []}
       />

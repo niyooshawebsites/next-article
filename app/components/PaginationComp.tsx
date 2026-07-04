@@ -25,9 +25,7 @@ export default function PaginationComp({
 
   const createPageURL = (page: number) => {
     const params = new URLSearchParams(searchParams.toString());
-
     params.set("page", page.toString());
-
     return `${pathname}?${params.toString()}`;
   };
 
