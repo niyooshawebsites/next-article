@@ -23,6 +23,7 @@ export default function SearchCategory() {
     }
 
     router.push(`${pathname}?${params.toString()}`);
+    setSearchTerm("");
   };
 
   return (

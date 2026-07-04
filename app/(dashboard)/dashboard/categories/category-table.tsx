@@ -23,6 +23,7 @@ import {
 
 import PaginationComp from "@/app/components/PaginationComp";
 import SearchCategory from "@/app/components/SearchCategory";
+import { useSearchParams, useRouter } from "next/navigation";
 
 interface PaginationMeta {
   page: number;
@@ -44,6 +45,10 @@ export default function CategoryTable({
   currentPage,
 }: Props) {
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  const category = searchParams.get("category");
 
   const table = useReactTable({
     data,
@@ -85,6 +90,14 @@ export default function CategoryTable({
         <>
           <div className="flex gap-2 mb-5">
             <SearchCategory />
+            {category ? (
+              <Button
+                variant={"outline"}
+                onClick={() => router.push("/dashboard/categories")}
+              >
+                Clear Filters
+              </Button>
+            ) : null}
           </div>
           <Table className="p-3 w-full md:w-4/12">
             <TableHeader>

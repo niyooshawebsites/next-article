@@ -326,15 +326,18 @@ export async function fetchCategoryForEditForDashboard(id: string) {
 }
 
 // search a category for the dashboard
-export async function searchCategoryForDashbaord(id: string) {
+export async function searchCategoryForDashboard(name: string) {
   try {
-    const category = await prisma.category.findUnique({
+    const categories = await prisma.category.findMany({
       where: {
-        id,
+        name: {
+          contains: name,
+          mode: "insensitive", // Case-insensitive search
+        },
       },
     });
 
-    if (!category) {
+    if (categories.length === 0) {
       return {
         success: true,
         msg: "No category found",
@@ -343,7 +346,6 @@ export async function searchCategoryForDashbaord(id: string) {
           page: 1,
           pageSize: 10,
           totalCategories: 0,
-          totalPosts: 0,
           totalPages: 1,
         },
       };
@@ -352,25 +354,25 @@ export async function searchCategoryForDashbaord(id: string) {
     return {
       success: true,
       msg: "Categories fetched successfully",
-      data: [category],
+      data: categories,
       pagination: {
         page: 1,
         pageSize: 10,
-        totalCategories: 1,
+        totalCategories: categories.length,
         totalPages: 1,
       },
     };
   } catch (err) {
-    console.log(err);
+    console.error(err);
+
     return {
       success: false,
-      msg: "Faile to search the category",
+      msg: "Failed to search the category",
       data: [],
       pagination: {
         page: 1,
         pageSize: 10,
         totalCategories: 0,
-        totalPosts: 0,
         totalPages: 1,
       },
     };
