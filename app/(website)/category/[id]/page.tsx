@@ -48,11 +48,7 @@ export default async function page({ params, searchParams }: Props) {
           );
         })}
       </div>
-      <PaginationComp
-        currentPage={currentPage}
-        totalPages={totalPages}
-        categoryId={id}
-      />
+      <PaginationComp currentPage={currentPage} totalPages={totalPages} />
     </main>
   );
 }
