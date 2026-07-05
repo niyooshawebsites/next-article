@@ -6,7 +6,7 @@ import { useState } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 
 export default function SearchCategory() {
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState<string>("");
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -33,7 +33,13 @@ export default function SearchCategory() {
         placeholder="Search Category"
         onChange={(e) => setSearchTerm(e.target.value)}
       />
-      <Button type="submit">Search</Button>
+      <Button
+        type="submit"
+        variant="default"
+        className="bg-blue-200 text-blue-700 hover:bg-blue-300 cursor-pointer"
+      >
+        Search
+      </Button>
     </form>
   );
 }

@@ -7,27 +7,19 @@ import {
   SelectTrigger,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import type { Category } from "@/lib/generated/prisma/client";
 
-interface Props {
-  categories: Category[] | [];
-}
-
-export function FilterByCategory({ categories }: Props) {
+export function FilterByStatus() {
   return (
     <form action="/dashboard/articles" className="flex gap-2">
-      <Select name="category">
+      <Select name="published">
         <SelectTrigger>
-          <SelectValue placeholder={"Filter By Category"} />
+          <SelectValue placeholder={"Filter By Status"} />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="">Select Category</SelectItem>
+          <SelectItem value="">Select Status</SelectItem>
           <SelectGroup>
-            {categories.map((category) => (
-              <SelectItem key={category.id} value={category.id}>
-                {category.name}
-              </SelectItem>
-            ))}
+            <SelectItem value="yes">Yes</SelectItem>
+            <SelectItem value="no">No</SelectItem>
           </SelectGroup>
         </SelectContent>
       </Select>
@@ -36,7 +28,7 @@ export function FilterByCategory({ categories }: Props) {
         variant="default"
         className="bg-blue-200 text-blue-700 hover:bg-blue-300 cursor-pointer"
       >
-        Filter By Category
+        Filter By Status
       </Button>
     </form>
   );

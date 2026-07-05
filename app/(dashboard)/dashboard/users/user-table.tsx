@@ -1,6 +1,8 @@
 "use client";
-import { useState, useEffect } from "react";
-import { fetchUsers } from "@/app/actions/user-actions";
+
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { fetchUsers, deleteUsers } from "@/app/actions/user-actions";
 import {
   ColumnDef,
   flexRender,
@@ -14,9 +16,7 @@ interface DataTableProps {
   columns: ColumnDef<User>[];
 }
 
-export default function UserTable({
-  columns,
-}: DataTableProps) {
+export default function UserTable({ columns }: DataTableProps) {
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,

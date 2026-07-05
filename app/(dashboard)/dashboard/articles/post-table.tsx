@@ -6,6 +6,7 @@ import { deletePosts } from "@/app/actions/post-actions";
 import { SearchArticle } from "@/app/components/SearchArticle";
 import { FilterByCategory } from "@/app/components/FilterByCategory";
 import type { Category } from "@/lib/generated/prisma/client";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import {
   flexRender,
@@ -26,6 +27,7 @@ import {
 } from "@/components/ui/table";
 
 import PaginationComp from "@/app/components/PaginationComp";
+import { FilterByStatus } from "@/app/components/FilterByStatus";
 
 interface PaginationMeta {
   page: number;
@@ -48,6 +50,10 @@ export default function ArticleTable({
   categories,
 }: Props) {
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const category = searchParams.get("category");
+  const article_details = searchParams.get("article_details");
 
   const table = useReactTable({
     data,
@@ -78,7 +84,7 @@ export default function ArticleTable({
               if (!confirmation) return;
               await deletePosts(selectedIds);
             }}
-            className="text-red-500 cursor-pointer"
+            className="cursor-pointer"
           >
             Delete Selected ({selectedIds.length})
           </Button>
@@ -88,8 +94,18 @@ export default function ArticleTable({
       {data.length > 0 ? (
         <>
           <div className="flex gap-2 mb-5">
-            <FilterByCategory categories={categories} />
+            <FilterByCategory categories={categories} /> |
+            <FilterByStatus /> |
             <SearchArticle />
+            {category || article_details ? (
+              <Button
+                onClick={() => router.push("/dashboard/articles")}
+                variant="destructive"
+                className="cursor-pointer"
+              >
+                Clear Filters
+              </Button>
+            ) : null}
           </div>
 
           <Table className="p-3 w-full">

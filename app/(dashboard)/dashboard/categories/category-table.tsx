@@ -47,7 +47,6 @@ export default function CategoryTable({
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const searchParams = useSearchParams();
   const router = useRouter();
-
   const category = searchParams.get("category");
 
   const table = useReactTable({
@@ -92,8 +91,9 @@ export default function CategoryTable({
             <SearchCategory />
             {category ? (
               <Button
-                variant={"outline"}
+                variant="destructive"
                 onClick={() => router.push("/dashboard/categories")}
+                className="cursor-pointer"
               >
                 Clear Filters
               </Button>

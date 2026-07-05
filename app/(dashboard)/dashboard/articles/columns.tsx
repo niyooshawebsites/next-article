@@ -27,8 +27,8 @@ function ActionCell({ post }: { post: Article }) {
       <Link href={`/dashboard/article/${post.id}`}>
         <Button
           size="sm"
-          variant="outline"
-          className="text-blue-700 bg-blue-50 cursor-pointer hover:bg-blue-100 hover:text-blue-700"
+          variant="default"
+          className="bg-blue-200 text-blue-700 hover:bg-blue-300 cursor-pointer"
         >
           View
         </Button>
@@ -91,11 +91,11 @@ export const columns: ColumnDef<Article>[] = [
     header: "Published",
     cell: ({ row }) =>
       row.original.published ? (
-        <span className="bg-green-500 px-2 py-1 rounded-md text-white">
-          Yes
-        </span>
+        <span className="bg-blue-500 px-2 py-1 rounded-lg text-white">Yes</span>
       ) : (
-        <span className="bg-red-500 px-2 py-1 text-white rounded-md">No</span>
+        <span className="bg-orange-500 px-2 py-1 text-white rounded-lg">
+          No
+        </span>
       ),
   },
   {

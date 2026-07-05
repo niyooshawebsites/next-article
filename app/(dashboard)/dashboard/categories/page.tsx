@@ -15,6 +15,7 @@ interface Props {
 export default async function AllCategories({ searchParams }: Props) {
   let payload;
   let pagination;
+  let count;
 
   const params = await searchParams;
   const category = params.category ?? null;
@@ -28,6 +29,7 @@ export default async function AllCategories({ searchParams }: Props) {
     const res = await searchCategoryForDashboard(category);
     payload = res.data;
     pagination = res.pagination;
+    count = res.pagination.totalCategories;
   } else {
     const res = await fetchCategoriesForDashboard({
       page,
@@ -35,11 +37,12 @@ export default async function AllCategories({ searchParams }: Props) {
     });
     payload = res.data;
     pagination = res.pagination;
+    count = res.pagination.totalCategories;
   }
 
   return (
     <main className="flex flex-col min-h-screen p-5">
-      <h1 className="mb-4 text-2xl font-bold">All Categories</h1>
+      <h1 className="mb-4 text-2xl font-bold">All Categories {`(${count})`}</h1>
 
       <CategoryTable
         data={payload}

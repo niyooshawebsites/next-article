@@ -19,6 +19,8 @@ interface Props {
 export default async function AllArticles({ searchParams }: Props) {
   let payload;
   let pagination;
+  let count;
+
   const params = await searchParams;
   const page = Number(params.page ?? 1);
   const article_details = params.article_details;
@@ -31,37 +33,36 @@ export default async function AllArticles({ searchParams }: Props) {
   const categoryResponse = await fetchAllCategories();
 
   if (cid && article_details && page && userId) {
-    const response = await fitlerPostsByCategoryAndSearchTermForDashboard(
+    const res = await fitlerPostsByCategoryAndSearchTermForDashboard(
       cid,
       article_details,
       page,
       10,
       userId,
     );
-    payload = response.data ?? [];
-    pagination = response.pagination;
+    payload = res.data ?? [];
+    pagination = res.pagination;
+    count = res.pagination.totalPosts;
   } else if (cid && page && userId) {
-    const response = await filterPostsByCatetoryForDashboard(cid, page, 10, userId);
-    payload = response.data ?? [];
-    pagination = response.pagination;
+    const res = await filterPostsByCatetoryForDashboard(cid, page, 10, userId);
+    payload = res.data ?? [];
+    pagination = res.pagination;
+    count = res.pagination.totalPosts;
   } else if (article_details && page && userId) {
-    const response = await searchDashboardPost(
-      article_details,
-      page,
-      10,
-      userId,
-    );
-    payload = response.data ?? [];
-    pagination = response.pagination;
+    const res = await searchDashboardPost(article_details, page, 10, userId);
+    payload = res.data ?? [];
+    pagination = res.pagination;
+    count = res.pagination.totalPosts;
   } else {
-    const response = await fetchAllPosts(page, 10, userId);
-    payload = response.data ?? [];
-    pagination = response.pagination;
+    const res = await fetchAllPosts(page, 10, userId);
+    payload = res.data ?? [];
+    pagination = res.pagination;
+    count = res.pagination.totalPosts;
   }
 
   return (
     <main className="flex flex-col min-h-screen p-5">
-      <h1 className="mb-4 text-2xl font-bold">All Articles</h1>
+      <h1 className="mb-4 text-2xl font-bold">All Articles {`(${count})`}</h1>
       <PostTable
         data={payload}
         pagination={pagination}
