@@ -3,119 +3,139 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { fetchUsers, deleteUsers } from "@/app/actions/user-actions";
+import { SearchUser } from "@/app/components/SearchUser";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
-  ColumnDef,
   flexRender,
   getCoreRowModel,
   useReactTable,
-  PaginationState,
+  RowSelectionState,
 } from "@tanstack/react-table";
-import type { User } from "@/lib/generated/prisma/client";
+import { columns, User } from "./columns";
+import type { Post, Comment } from "@/lib/generated/prisma/client";
+import {
+  Table,
+  TableHeader,
+  TableHead,
+  TableBody,
+  TableRow,
+  TableCell,
+} from "@/components/ui/table";
+import PaginationComp from "@/app/components/PaginationComp";
 
-interface DataTableProps {
-  columns: ColumnDef<User>[];
+interface PaginationMeta {
+  page: number;
+  pageSize: number;
+  totalPosts: number;
+  totalPages: number;
 }
 
-export default function UserTable({ columns }: DataTableProps) {
-  const [pagination, setPagination] = useState<PaginationState>({
-    pageIndex: 0,
-    pageSize: 10,
-  });
+interface Props {
+  data: User[];
+  pagination: PaginationMeta;
+  currentPage: number;
+  posts: Post[] | [];
+  comments: Comment[] | [];
+}
 
-  const [users, setUsers] = useState<User[]>([]);
-  const [pageCount, setPageCount] = useState(0);
+export default function UserTable({
+  data,
+  pagination,
+  currentPage,
+  posts,
+  comments,
+}: Props) {
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const user_details = searchParams.get("user_details");
 
   const table = useReactTable({
-    data: users,
+    data,
     columns,
     getCoreRowModel: getCoreRowModel(),
-    rowCount: pageCount * pagination.pageSize,
-    manualPagination: true,
-    pageCount,
+    enableRowSelection: true,
+    onRowSelectionChange: setRowSelection,
     state: {
-      pagination,
+      rowSelection,
     },
-    onPaginationChange: setPagination,
   });
 
-  async function loadUsers(): Promise<void> {
-    const res = await fetchUsers(pagination.pageIndex + 1, pagination.pageSize);
-
-    if (res.success && res.pagination) {
-      setUsers(res.data);
-      setPageCount(res.pagination.totalPages);
-    }
-  }
-
-  useEffect(() => {
-    loadUsers();
-  }, [pagination.pageIndex, pagination.pageSize]);
+  const selecteIds = table
+    .getSelectedRowModel()
+    .rows.map((row) => row.original.id);
 
   return (
     <>
-      {users.length ? (
+      {selecteIds.length > 0 && (
+        <div className="mb-4">
+          <Button
+            variant="destructive"
+            disabled={selecteIds.length === 0}
+            onClick={async () => {
+              const confirmation = confirm(
+                "Do you really want to delete the data?",
+              );
+
+              if (!confirmation) return;
+              await deleteUsers(selecteIds);
+            }}
+          >
+            Delete Selected {selecteIds.length}
+          </Button>
+        </div>
+      )}
+
+      {data.length > 0 ? (
         <>
-          <table className="w-full border">
-            <thead>
+          <Table className="p-3 w-full">
+            <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (
-                <tr key={headerGroup.id}>
+                <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
-                    <th
-                      key={header.id}
-                      className="border border-gray-300 p-1 text-left"
-                    >
+                    <TableHead key={header.id}>
                       {header.isPlaceholder
                         ? null
                         : flexRender(
                             header.column.columnDef.header,
                             header.getContext(),
                           )}
-                    </th>
+                    </TableHead>
                   ))}
-                </tr>
+                </TableRow>
               ))}
-            </thead>
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows.length ? (
+                table.getRowModel().rows.map((row) => (
+                  <TableRow key={row.id}>
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={3} className="text-center py-6">
+                    No Users found...
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
 
-            <tbody>
-              {table.getRowModel().rows.map((row) => (
-                <tr key={row.id}>
-                  {row.getVisibleCells().map((cell) => (
-                    <td key={cell.id} className="border border-gray-300 p-1">
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-
-          <div className="flex gap-2 mt-4">
-            <button
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
-            >
-              Previous
-            </button>
-
-            <span>
-              Page {table.getState().pagination.pageIndex + 1} of {pageCount}
-            </span>
-
-            <button
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
-            >
-              Next
-            </button>
-          </div>
+          <PaginationComp
+            currentPage={currentPage}
+            totalPages={pagination.totalPages}
+          />
         </>
       ) : (
-        <>
-          <span>No users yet...</span>
-        </>
+        <span>No users...</span>
       )}
     </>
   );

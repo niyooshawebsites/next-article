@@ -5,7 +5,7 @@ import DeleteDataButton from "@/app/components/DeleteButton";
 import { Checkbox } from "@/components/ui/checkbox";
 import { deleteUser } from "@/app/actions/user-actions";
 
-interface User {
+export interface User {
   id: string;
   name: string;
   email: string;

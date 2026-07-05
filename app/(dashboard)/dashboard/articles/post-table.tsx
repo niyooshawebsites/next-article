@@ -38,7 +38,7 @@ interface PaginationMeta {
 
 interface Props {
   data: Article[];
-  pagination?: PaginationMeta;
+  pagination: PaginationMeta;
   currentPage: number;
   categories: Category[] | [];
 }
@@ -148,9 +148,10 @@ export default function ArticleTable({
               )}
             </TableBody>
           </Table>
+
           <PaginationComp
             currentPage={currentPage}
-            totalPages={pagination!.totalPages}
+            totalPages={pagination.totalPages}
           />
         </>
       ) : (
