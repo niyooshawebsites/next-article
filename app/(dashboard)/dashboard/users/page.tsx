@@ -1,8 +1,10 @@
-import { columns } from "./columns";
 import UserTable from "./user-table";
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { fetchUsers } from "@/app/actions/user-actions";
+import {
+  filterUsersByUserDetailsForDashboard,
+  fetchUsers,
+} from "@/app/actions/user-actions";
 
 interface Props {
   searchParams: Promise<{
@@ -27,7 +29,7 @@ export default async function AllUsers({ searchParams }: Props) {
   const user_details = params.user_details;
 
   if (user_details && page) {
-    const res = await fetchUsers();
+    const res = await filterUsersByUserDetailsForDashboard(user_details, page);
     payload = res.data;
     pagination = res.pagination;
     count = res.pagination?.totalUsers;
@@ -40,7 +42,7 @@ export default async function AllUsers({ searchParams }: Props) {
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">All Users</h1>
+      <h1 className="text-2xl font-bold mb-4">All Users {`(${count})`}</h1>
       <UserTable data={payload} pagination={pagination} currentPage={page} />
     </div>
   );

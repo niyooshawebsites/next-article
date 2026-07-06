@@ -127,7 +127,7 @@ export async function fetchCategoriesForDashboard({ page = 1, pageSize = 10 }) {
       };
     }
 
-    const totalCategories = categories.length;
+    const totalCategories = await prisma.user.count();
 
     return {
       success: true,
@@ -351,6 +351,15 @@ export async function searchCategoryForDashboard(name: string) {
       };
     }
 
+    const totalCategories = await prisma.category.count({
+      where: {
+        name: {
+          contains: name,
+          mode: "insensitive", // Case-insensitive search
+        },
+      },
+    });
+
     return {
       success: true,
       msg: "Categories fetched successfully",
@@ -358,7 +367,7 @@ export async function searchCategoryForDashboard(name: string) {
       pagination: {
         page: 1,
         pageSize: 10,
-        totalCategories: categories.length,
+        totalCategories,
         totalPages: 1,
       },
     };

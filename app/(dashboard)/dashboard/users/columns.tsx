@@ -4,18 +4,16 @@ import { ColumnDef } from "@tanstack/react-table";
 import DeleteDataButton from "@/app/components/DeleteButton";
 import { Checkbox } from "@/components/ui/checkbox";
 import { deleteUser } from "@/app/actions/user-actions";
+import { Prisma } from "@/lib/generated/prisma/client";
 
-export interface User {
-  id: string;
-  name: string;
-  email: string;
-  post: number;
-  comment: number;
-  emailVerified: Date;
-  createdAt: Date;
-}
+export type UserWithRelations = Prisma.UserGetPayload<{
+  include: {
+    posts: true;
+    comments: true;
+  };
+}>;
 
-export const columns: ColumnDef<User>[] = [
+export const columns: ColumnDef<UserWithRelations>[] = [
   {
     id: "Select",
     header: ({ table }) => (
@@ -36,7 +34,7 @@ export const columns: ColumnDef<User>[] = [
     header: "ID",
   },
   {
-    accessorKey: "Name",
+    accessorKey: "name",
     header: "Username",
   },
   {
@@ -44,37 +42,56 @@ export const columns: ColumnDef<User>[] = [
     header: "Email",
   },
   {
-    accessorKey: "post",
-    header: "Articles",
+    accessorKey: "posts",
+    header: () => <div className="text-center">Articles</div>,
+    cell: ({ row }) => (
+      <p className="text-center">{row.original?.posts?.length}</p>
+    ),
   },
   {
-    accessorKey: "comment",
-    header: "Comments",
+    accessorKey: "comments",
+    header: () => <div className="text-center">Comments</div>,
+    cell: ({ row }) => (
+      <p className="text-center">{row.original?.comments?.length}</p>
+    ),
   },
   {
     accessorKey: "emailVerified",
-    header: "Verified",
+    header: () => <div className="text-center">Verified</div>,
     cell: ({ row }) =>
       row.original.emailVerified ? (
-        <span className="bg-blue-200 px-2 py-1 rounded-lg text-blue-700">
-          Yes
-        </span>
+        <div className="text-center">
+          <span className="bg-blue-200 px-2 py-1 rounded-lg text-blue-700">
+            Yes
+          </span>
+        </div>
       ) : (
-        <span className="bg-red-200 px-2 py-1 text-red-700 rounded-lg">No</span>
+        <div className="text-center">
+          <span className="bg-red-200 px-2 py-1 text-red-700 rounded-lg">
+            No
+          </span>
+        </div>
       ),
   },
   {
     accessorKey: "createdAt",
-    header: "Created At",
-    cell: ({ row }) =>
-      new Date(row.original.createdAt).toLocaleDateString("en-IN"),
+    header: () => <div className="text-center">Created At</div>,
+    cell: ({ row }) => (
+      <div className="text-center">
+        {new Date(row.original.createdAt).toLocaleDateString("en-IN")}
+      </div>
+    ),
   },
   {
     id: "actions",
     header: () => <div className="text-center">Actions</div>,
     cell: ({ row }) => {
       const user = row.original;
-      return <DeleteDataButton id={user.id} deleteData={deleteUser} />;
+      return (
+        <div className="flex justify-center">
+          <DeleteDataButton id={user.id} deleteData={deleteUser} />
+        </div>
+      );
     },
   },
 ];

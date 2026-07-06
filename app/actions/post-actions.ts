@@ -818,7 +818,11 @@ export async function fitlerPostsByCategoryAndSearchTermForDashboard(
         };
       }
 
-      totalPosts = posts.length;
+      totalPosts = await prisma.post.count({
+        where: {
+          AND: [{ categoryId }, { title: article_details }],
+        },
+      });
 
       return {
         success: true,
@@ -862,7 +866,13 @@ export async function fitlerPostsByCategoryAndSearchTermForDashboard(
         };
       }
 
-      totalPosts = posts.length;
+      totalPosts = await prisma.post.count({
+        where: {
+          categoryId,
+          title: article_details,
+          authorId: userId,
+        },
+      });
 
       return {
         success: true,

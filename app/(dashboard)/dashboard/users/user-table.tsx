@@ -2,17 +2,17 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { fetchUsers, deleteUsers } from "@/app/actions/user-actions";
+import { deleteUsers } from "@/app/actions/user-actions";
 import { SearchUser } from "@/app/components/SearchUser";
 import { useRouter, useSearchParams } from "next/navigation";
+import { RefreshButton } from "@/app/components/RefreshButton";
 import {
   flexRender,
   getCoreRowModel,
   useReactTable,
   RowSelectionState,
 } from "@tanstack/react-table";
-import { columns, User } from "./columns";
-import type { Post, Comment } from "@/lib/generated/prisma/client";
+import { UserWithRelations, columns } from "./columns";
 import {
   Table,
   TableHeader,
@@ -26,16 +26,14 @@ import PaginationComp from "@/app/components/PaginationComp";
 interface PaginationMeta {
   page: number;
   pageSize: number;
-  totalPosts: number;
+  totalUsers: number;
   totalPages: number;
 }
 
 interface Props {
-  data: User[];
+  data: UserWithRelations[];
   pagination: PaginationMeta;
   currentPage: number;
-  // posts: Post[] | [];
-  // comments: Comment[] | [];
 }
 
 export default function UserTable({ data, pagination, currentPage }: Props) {
@@ -82,6 +80,20 @@ export default function UserTable({ data, pagination, currentPage }: Props) {
 
       {data.length > 0 ? (
         <>
+          <div className="flex gap-2 mb-5">
+            {/* <FilterByCategory categories={categories} /> |
+            <FilterByStatus /> | */}
+            <SearchUser />
+            {user_details ? (
+              <Button
+                onClick={() => router.push("/dashboard/users")}
+                variant="destructive"
+                className="cursor-pointer"
+              >
+                Clear Filters
+              </Button>
+            ) : null}
+          </div>
           <Table className="p-3 w-full">
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (
@@ -116,7 +128,8 @@ export default function UserTable({ data, pagination, currentPage }: Props) {
               ) : (
                 <TableRow>
                   <TableCell colSpan={3} className="text-center py-6">
-                    No Users found...
+                    <span className="text-red-500">No Users found...</span>
+                    <RefreshButton resource="users" />
                   </TableCell>
                 </TableRow>
               )}
@@ -129,7 +142,10 @@ export default function UserTable({ data, pagination, currentPage }: Props) {
           />
         </>
       ) : (
-        <span>No users...</span>
+        <>
+          <span className="text-red-500">No Users found...</span>
+          <RefreshButton resource="users" />
+        </>
       )}
     </>
   );

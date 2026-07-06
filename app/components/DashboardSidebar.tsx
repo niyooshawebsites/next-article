@@ -67,11 +67,6 @@ const userItems = [
     icon: Users,
     link: "/dashboard/users",
   },
-  {
-    title: "Create User",
-    icon: UserPlus,
-    link: "/dashboard/user/create",
-  },
 ];
 
 const settingItems = [
