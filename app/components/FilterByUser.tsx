@@ -2,43 +2,42 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useState } from "react";
 
-export function SearchArticle() {
+export function FilterByUser() {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const router = useRouter();
-  const pathname = usePathname();
   const searchParams = useSearchParams();
+  const pathname = usePathname();
 
-  function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
+  const handleSubmit = (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const params = new URLSearchParams(searchParams.toString());
 
     if (searchTerm) {
-      params.set("article_details", searchTerm);
+      params.set("user_details", searchTerm);
     } else {
-      params.delete("article_details");
+      params.delete("user_details");
     }
 
     router.push(`${pathname}?${params.toString()}`);
-  }
+  };
 
   return (
     <form onSubmit={handleSubmit} className="flex gap-2">
       <Input
+        placeholder="Fitler By user"
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
-        placeholder="Search Post"
       />
-
       <Button
         type="submit"
-        variant="default"
+        variant={"default"}
         className="bg-blue-200 text-blue-700 hover:bg-blue-300 cursor-pointer"
       >
-        Search
+        Filter By User
       </Button>
     </form>
   );

@@ -7,6 +7,32 @@ import DeleteDataButton from "@/app/components/DeleteButton";
 import { deletePost } from "@/app/actions/post-actions";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useSession } from "next-auth/react";
+import { Prisma } from "@/lib/generated/prisma/client";
+
+export type ArticleWithRelations = Prisma.PostGetPayload<{
+  include: {
+    comments: {
+      select: {
+        id: true;
+        content: true;
+        authorId: true;
+        postId: true;
+      };
+    };
+    author: {
+      select: {
+        id: true;
+        name: true;
+      };
+    };
+    category: {
+      select: {
+        id: true;
+        name: true;
+      };
+    };
+  };
+}>;
 
 export interface Article {
   id: string;
@@ -50,7 +76,7 @@ function ActionCell({ post }: { post: Article }) {
   );
 }
 
-export const columns: ColumnDef<Article>[] = [
+export const columns: ColumnDef<ArticleWithRelations>[] = [
   {
     id: "Select",
     header: ({ table }) => (
@@ -81,6 +107,11 @@ export const columns: ColumnDef<Article>[] = [
     cell: ({ row }) => row.original.category?.name ?? "No Category",
   },
   {
+    accessorKey: "author.name",
+    header: "User",
+    cell: ({ row }) => row.original.author.name,
+  },
+  {
     accessorKey: "createdAt",
     header: "Created At",
     cell: ({ row }) =>
@@ -88,15 +119,21 @@ export const columns: ColumnDef<Article>[] = [
   },
   {
     accessorKey: "published",
-    header: "Published",
-    cell: ({ row }) =>
-      row.original.published ? (
-        <span className="bg-blue-500 px-2 py-1 rounded-lg text-white">Yes</span>
-      ) : (
-        <span className="bg-orange-500 px-2 py-1 text-white rounded-lg">
-          No
-        </span>
-      ),
+    header: () => <div className="text-center">Published</div>,
+    cell: ({ row }) => (
+      <div className="text-center">
+        {row.original.published ? (
+          // className="bg-blue-200 text-blue-700 hover:bg-blue-300 cursor-pointer"
+          <span className="bg-blue-300 px-2 py-1 rounded-lg text-blue-700">
+            Yes
+          </span>
+        ) : (
+          <span className="bg-red-300 px-2 py-1 text-red-700 rounded-lg">
+            No
+          </span>
+        )}
+      </div>
+    ),
   },
   {
     id: "actions",

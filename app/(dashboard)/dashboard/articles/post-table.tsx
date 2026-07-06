@@ -5,8 +5,11 @@ import { Button } from "@/components/ui/button";
 import { deletePosts } from "@/app/actions/post-actions";
 import { SearchArticle } from "@/app/components/SearchArticle";
 import { FilterByCategory } from "@/app/components/FilterByCategory";
+import { FilterByUser } from "@/app/components/FilterByUser";
 import type { Category } from "@/lib/generated/prisma/client";
 import { useRouter, useSearchParams } from "next/navigation";
+import { RefreshButton } from "@/app/components/RefreshButton";
+import { useSession } from "next-auth/react";
 
 import {
   flexRender,
@@ -15,7 +18,7 @@ import {
   RowSelectionState,
 } from "@tanstack/react-table";
 
-import { columns, Article } from "./columns";
+import { columns, ArticleWithRelations } from "./columns";
 
 import {
   Table,
@@ -37,7 +40,7 @@ interface PaginationMeta {
 }
 
 interface Props {
-  data: Article[];
+  data: ArticleWithRelations[];
   pagination: PaginationMeta;
   currentPage: number;
   categories: Category[] | [];
@@ -49,11 +52,13 @@ export default function ArticleTable({
   currentPage,
   categories,
 }: Props) {
+  const { data: session } = useSession();
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const router = useRouter();
   const searchParams = useSearchParams();
   const category = searchParams.get("category");
   const article_details = searchParams.get("article_details");
+  const user_details = searchParams.get("user_details");
 
   const table = useReactTable({
     data,
@@ -97,7 +102,13 @@ export default function ArticleTable({
             <FilterByCategory categories={categories} /> |
             <FilterByStatus /> |
             <SearchArticle />
-            {category || article_details ? (
+            {session?.user.role === 1 ? (
+              <>
+                |
+                <FilterByUser />
+              </>
+            ) : null}
+            {category || article_details || user_details ? (
               <Button
                 onClick={() => router.push("/dashboard/articles")}
                 variant="destructive"
@@ -142,7 +153,10 @@ export default function ArticleTable({
               ) : (
                 <TableRow>
                   <TableCell colSpan={3} className="text-center py-6">
-                    No Posts found...
+                    <div>
+                      <span className="text-red-500">No Posts found...</span>
+                      <RefreshButton resource="articles" />
+                    </div>
                   </TableCell>
                 </TableRow>
               )}
@@ -155,7 +169,10 @@ export default function ArticleTable({
           />
         </>
       ) : (
-        <span>No categories...</span>
+        <>
+          <span className="text-red-500">No Posts found...</span>
+          <RefreshButton resource="articles" />
+        </>
       )}
     </>
   );

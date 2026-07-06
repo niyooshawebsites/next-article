@@ -4,6 +4,7 @@ import {
   searchDashboardPost,
   filterPostsByCatetoryForDashboard,
   fitlerPostsByCategoryAndSearchTermForDashboard,
+  fetchAllPostsOfAUserForDashboard,
 } from "@/app/actions/post-actions";
 import { fetchAllCategories } from "@/app/actions/category-action";
 import { auth } from "@/lib/auth";
@@ -12,6 +13,7 @@ interface Props {
   searchParams: Promise<{
     page?: string;
     article_details?: string;
+    user_details?: string;
     category?: string;
   }>;
 }
@@ -24,6 +26,7 @@ export default async function AllArticles({ searchParams }: Props) {
   const params = await searchParams;
   const page = Number(params.page ?? 1);
   const article_details = params.article_details;
+  const user_details = params.user_details;
   const cid = params.category;
 
   const session = await auth();
@@ -50,6 +53,12 @@ export default async function AllArticles({ searchParams }: Props) {
     count = res.pagination.totalPosts;
   } else if (article_details && page && userId) {
     const res = await searchDashboardPost(article_details, page, 10, userId);
+    payload = res.data ?? [];
+    pagination = res.pagination;
+    count = res.pagination.totalPosts;
+  } else if (user_details && page) {
+    // code goes here
+    const res = await fetchAllPostsOfAUserForDashboard(user_details, page);
     payload = res.data ?? [];
     pagination = res.pagination;
     count = res.pagination.totalPosts;

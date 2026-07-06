@@ -1,7 +1,9 @@
 "use client";
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { deleteCategories } from "@/app/actions/category-action";
+import { RefreshButton } from "@/app/components/RefreshButton";
 
 import {
   flexRender,
@@ -134,7 +136,12 @@ export default function CategoryTable({
               ) : (
                 <TableRow>
                   <TableCell colSpan={3} className="text-center py-6">
-                    No categories found...
+                    <div>
+                      <span className="text-red-500">
+                        No Categories found...
+                      </span>
+                      <RefreshButton resource="categories" />
+                    </div>
                   </TableCell>
                 </TableRow>
               )}
@@ -149,7 +156,10 @@ export default function CategoryTable({
           </div>
         </>
       ) : (
-        <span>No categories...</span>
+        <>
+          <span className="text-red-500">No Categories found...</span>
+          <RefreshButton resource="categories" />
+        </>
       )}
     </>
   );
