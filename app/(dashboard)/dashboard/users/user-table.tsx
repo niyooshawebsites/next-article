@@ -34,17 +34,11 @@ interface Props {
   data: User[];
   pagination: PaginationMeta;
   currentPage: number;
-  posts: Post[] | [];
-  comments: Comment[] | [];
+  // posts: Post[] | [];
+  // comments: Comment[] | [];
 }
 
-export default function UserTable({
-  data,
-  pagination,
-  currentPage,
-  posts,
-  comments,
-}: Props) {
+export default function UserTable({ data, pagination, currentPage }: Props) {
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const router = useRouter();
   const searchParams = useSearchParams();

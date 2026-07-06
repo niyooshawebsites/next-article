@@ -6,6 +6,24 @@ import { auth } from "@/lib/auth";
 
 // fetch all the users
 export async function fetchUsers(page = 1, pageSize = 10) {
+  const session = await auth();
+
+  const admin = session?.user.role === 1;
+
+  if (!admin) {
+    return {
+      success: false,
+      msg: "Unauthorized Action",
+      data: [],
+      pagination: {
+        page,
+        pageSize,
+        totalUsers: 0,
+        totalPages: 1,
+      },
+    };
+  }
+
   try {
     const users = await prisma.user.findMany({
       where: {
@@ -45,6 +63,12 @@ export async function fetchUsers(page = 1, pageSize = 10) {
       success: false,
       msg: "Failed to fetch users",
       data: [],
+      pagination: {
+        page,
+        pageSize,
+        totalUsers: 0,
+        totalPages: 1,
+      },
     };
   }
 }
@@ -53,7 +77,9 @@ export async function fetchUsers(page = 1, pageSize = 10) {
 export async function deleteUser(userId: string) {
   const session = await auth();
 
-  if (session?.user.role !== 1) {
+  const admin = session?.user.role === 1;
+
+  if (!admin) {
     return {
       success: false,
       msg: "Unauthorized Action",
@@ -85,13 +111,15 @@ export async function deleteUser(userId: string) {
 // delete users
 export async function deleteUsers(userIds: string[]) {
   const session = await auth();
+  const admin = session?.user.role === 1;
 
-  if (session?.user.role !== 1) {
+  if (!admin) {
     return {
       success: false,
       msg: "Unauthorized Action",
     };
   }
+
   try {
     await prisma.user.deleteMany({
       where: {
