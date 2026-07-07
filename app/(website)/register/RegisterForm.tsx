@@ -21,7 +21,7 @@ const initialState = {
 
 export default function RegisterForm() {
   const [state, formAction] = useActionState(registerUser, initialState);
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
 
   return (
     <div className="flex justify-center items-center w-3/12 border border-gray-300 rounded-lg">

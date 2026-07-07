@@ -21,7 +21,7 @@ const initialState = {
 
 export default function LoginForm() {
   const [state, formAction] = useActionState(loginUser, initialState);
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
 
   return (
     <div className="flex justify-center items-center w-2/12 border border-gray-300 rounded-lg">

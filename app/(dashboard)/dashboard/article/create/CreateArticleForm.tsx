@@ -3,7 +3,6 @@
 import { Button } from "@/components/ui/button";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import CustomEditor from "@/app/components/CustomEditor";
 import { useActionState, useState, useEffect } from "react";
 import { createPost } from "@/app/actions/post-actions";
@@ -83,7 +82,7 @@ export default function CreateArticleForm({ categories }: Props) {
   return (
     <div className="flex justify-center items-center w-10/12 border border-gray-300 rounded-lg">
       <div className="w-full bg-gray-50 p-5 rounded-lg space-y-3">
-        <h1 className="text-2xl">Fill out the details to create an article</h1>
+        <h1>Fill out the details to create an article: </h1>
 
         <form action={formAction} className="space-y-4">
           <Select onValueChange={setCategoryId}>
@@ -159,7 +158,7 @@ export default function CreateArticleForm({ categories }: Props) {
             disabled={uploading || !imageKey}
             className="cursor-pointer bg-gray-800 text-white hover:bg-gray-900"
           >
-            {uploading ? "Uploading..." : "Create"}
+            {uploading ? "Uploading..." : "Create Article"}
           </Button>
         </form>
       </div>

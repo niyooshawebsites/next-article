@@ -134,3 +134,9 @@
     @apply font-sans;
   }
 }
+
+/* setting ck editors's default height */
+
+.editor-container__editor .ck-editor__editable_inline {
+  min-height: 300px;
+}
