@@ -1,5 +1,9 @@
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import {
+  SidebarProvider,
+  SidebarTrigger,
+  SidebarInset,
+} from "@/components/ui/sidebar";
 import DashboardSidebar from "../components/DashboardSidebar";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
@@ -36,11 +40,13 @@ export default async function DashboardLayout({
                 <div className=" bg-gray-50">
                   <DashboardSidebar />
                 </div>
-                <main className="w-full p-3">
-                  <SidebarTrigger />
-                  {children}
-                  <Toaster />
-                </main>
+                <SidebarInset>
+                  <main className="w-full p-3">
+                    <SidebarTrigger />
+                    {children}
+                    <Toaster />
+                  </main>
+                </SidebarInset>
               </SidebarProvider>
             </TooltipProvider>
           </div>

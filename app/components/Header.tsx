@@ -1,3 +1,5 @@
+"use client";
+
 import {
   NavigationMenu,
   NavigationMenuList,
@@ -14,12 +16,20 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import { UserCheck, UserPlus } from "lucide-react";
+import { UserCheck, UserPlus, LayoutDashboard } from "lucide-react";
+import { useSession } from "next-auth/react";
 
 export default function Header() {
+  const { data: session } = useSession();
+  let isLoggedIn = false;
+
+  if (session?.user.id) {
+    isLoggedIn = true;
+  }
+
   return (
-    <header className="flex justify-between items-center rounded-md px-3 py-2 bg-gray-100 w-full">
-      <div>
+    <header className="flex justify-between items-center rounded-md px-3 py-2 bg-blue-500 w-full">
+      <div className="flex justify-center items-center">
         <Link href="/">
           <h1 className="yesteryear-regular text-4xl" style={{}}>
             Next Articles
@@ -28,7 +38,7 @@ export default function Header() {
       </div>
       <nav className="flex">
         <NavigationMenu>
-          <NavigationMenuList>
+          <NavigationMenuList className="gap-3">
             <NavigationMenuItem>
               <NavigationMenuLink asChild>
                 <Link href="/" className="cursor-pointer hover:font-bold">
@@ -60,22 +70,33 @@ export default function Header() {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-20 mr-4 mt-4" align="start">
-            <DropdownMenuGroup>
-              <Link href="/login">
-                <DropdownMenuItem className="hover:bg-gray-100 cursor-pointer">
-                  <UserCheck />
-                  Login
-                </DropdownMenuItem>
-              </Link>
+            {isLoggedIn ? (
+              <DropdownMenuGroup>
+                <Link href="/dashboard">
+                  <DropdownMenuItem className="hover:bg-gray-100 cursor-pointer">
+                    <LayoutDashboard />
+                    Dashboard
+                  </DropdownMenuItem>
+                </Link>
+              </DropdownMenuGroup>
+            ) : (
+              <DropdownMenuGroup>
+                <Link href="/login">
+                  <DropdownMenuItem className="hover:bg-gray-100 cursor-pointer">
+                    <UserCheck />
+                    Login
+                  </DropdownMenuItem>
+                </Link>
 
-              <DropdownMenuSeparator className="bg-gray-200" />
+                <DropdownMenuSeparator className="bg-gray-200" />
 
-              <Link href="/register">
-                <DropdownMenuItem className="hover:bg-gray-100 cursor-pointer">
-                  <UserPlus /> Register
-                </DropdownMenuItem>
-              </Link>
-            </DropdownMenuGroup>
+                <Link href="/register">
+                  <DropdownMenuItem className="hover:bg-gray-100 cursor-pointer">
+                    <UserPlus /> Register
+                  </DropdownMenuItem>
+                </Link>
+              </DropdownMenuGroup>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       </nav>

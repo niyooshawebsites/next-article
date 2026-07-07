@@ -5,6 +5,7 @@ import prisma from "@/lib/prisma";
 import crypto from "crypto";
 import { sendVerificationEmail } from "@/lib/mail";
 import { signIn, signOut } from "@/lib/auth";
+import { auth } from "@/lib/auth";
 
 interface ActionState {
   success: boolean;
@@ -107,6 +108,72 @@ export async function loginUser(prevState: ActionState, formData: FormData) {
     return {
       success: false,
       msg: "Login failed. Please try again!",
+    };
+  }
+}
+
+// update password
+export async function updatePassword(
+  userId: string,
+  prevState: ActionState,
+  formData: FormData,
+) {
+  const session = await auth();
+
+  if (session?.user.id !== userId) {
+    return {
+      success: false,
+      msg: "Unathorized action",
+    };
+  }
+
+  try {
+    const password = (formData.get("password") as string).trim();
+    const confirmPassword = (formData.get("confirmPassword") as string).trim();
+
+    if (!password || !confirmPassword) {
+      return {
+        success: false,
+        msg: "Please fill out all the credentials",
+      };
+    }
+
+    if (password !== confirmPassword) {
+      return {
+        success: false,
+        msg: "Passwords do not match",
+      };
+    }
+
+    if (password.length < 8) {
+      return {
+        success: false,
+        msg: "Password must be at least 8 characters long",
+      };
+    }
+
+    // hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // update user
+    await prisma.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        password: hashedPassword,
+      },
+    });
+
+    return {
+      success: true,
+      msg: "Password updated successfully",
+    };
+  } catch (err) {
+    console.log(err instanceof Error ? err.message : "Something went wrong");
+    return {
+      success: false,
+      msg: "Failed to update password",
     };
   }
 }
