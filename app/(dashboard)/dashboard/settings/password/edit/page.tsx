@@ -62,6 +62,7 @@ export default function EditPassword() {
                   placeholder="Enter password"
                   name="password"
                   className="border-gray-300 focus:outline-none focus:ring-0 focus-visible:ring-0 focus:border-gray-500"
+                  required
                 />
                 <InputGroupAddon align={"inline-end"}>
                   {showPassword ? (
@@ -89,6 +90,7 @@ export default function EditPassword() {
                   placeholder="Enter confirm password"
                   name="confrmPassword"
                   className="border-gray-300 focus:outline-none focus:ring-0 focus-visible:ring-0 focus:border-gray-500"
+                  required
                 />
                 <InputGroupAddon align={"inline-end"}>
                   {showConfirmPassword ? (

@@ -141,14 +141,7 @@ export default function CreateArticleForm({ categories }: Props) {
 
           <Field>
             <FieldLabel htmlFor="content">Article Content</FieldLabel>
-            {/* <Textarea
-              id="content"
-              name="content"
-              required
-              className="h-96 border-gray-300 focus:outline-none focus:ring-0 focus-visible:ring-0 focus:border-gray-500"
-            /> */}
             <CustomEditor value={content} onChange={setContent} />
-
             <input type="hidden" name="content" value={content} />
           </Field>
 

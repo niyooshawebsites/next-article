@@ -1,18 +1,15 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { useState, useEffect, useActionState } from "react";
+import { useEffect, useActionState } from "react";
 import { toast } from "sonner";
 import { useSession } from "next-auth/react";
 import { updatePassword } from "@/app/actions/auth-actions";
 import { Field, FieldLabel } from "@/components/ui/field";
-import {
-  InputGroup,
-  InputGroupInput,
-  InputGroupAddon,
-} from "@/components/ui/input-group";
-import { EyeOffIcon, EyeIcon } from "lucide-react";
+import { InputGroup, InputGroupInput } from "@/components/ui/input-group";
 import { signOut } from "next-auth/react";
+import { getPresignedUrl } from "@/app/actions/upload-action";
+import Image from "next/image";
 
 const initialState = {
   success: false,
@@ -25,9 +22,8 @@ export default function EditProfile() {
 
   const action = updatePassword.bind(null, userId as string);
   const [state, formAction] = useActionState(action, initialState);
-  const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [showConfirmPassword, setShowConfirmPassword] =
-    useState<boolean>(false);
+
+  async function handleFileUpload() {}
 
   useEffect(() => {
     if (!state.msg) return;
@@ -52,57 +48,20 @@ export default function EditProfile() {
       <h1 className="text-2xl font-bold mb-4 content-end">Update Profile</h1>
       <div className="flex justify-center items-center w-4/12 md-w-full border border-gray-300 rounded-lg">
         <div className="w-full bg-gray-50 p-5 rounded-lg space-y-3">
-          <h1>Fill out the details to update your password: </h1>
+          <h1>Fill out the details to update your profile: </h1>
           <form action={formAction} className="space-y-4">
             <Field>
-              <FieldLabel htmlFor="password">Password: </FieldLabel>
+              <FieldLabel htmlFor="image">Profile Picture: </FieldLabel>
               <InputGroup>
                 <InputGroupInput
-                  type="password"
-                  placeholder="Enter password"
-                  name="password"
+                  type="file"
+                  placeholder="Upload profile picture"
+                  name="image"
+                  accept="image/*"
                   className="border-gray-300 focus:outline-none focus:ring-0 focus-visible:ring-0 focus:border-gray-500"
+                  onChange={handleFileUpload}
+                  required
                 />
-                <InputGroupAddon align={"inline-end"}>
-                  {showPassword ? (
-                    <EyeOffIcon
-                      className="cursor-pointer"
-                      onClick={() => setShowPassword((prev) => !prev)}
-                    />
-                  ) : (
-                    <EyeIcon
-                      className="cursor-pointer"
-                      onClick={() => setShowPassword((prev) => !prev)}
-                    />
-                  )}
-                </InputGroupAddon>
-              </InputGroup>
-            </Field>
-
-            <Field>
-              <FieldLabel htmlFor="confrmPassword">
-                Confirm Password:{" "}
-              </FieldLabel>
-              <InputGroup>
-                <InputGroupInput
-                  type="confrmPassword"
-                  placeholder="Enter confirm password"
-                  name="confrmPassword"
-                  className="border-gray-300 focus:outline-none focus:ring-0 focus-visible:ring-0 focus:border-gray-500"
-                />
-                <InputGroupAddon align={"inline-end"}>
-                  {showConfirmPassword ? (
-                    <EyeOffIcon
-                      className="cursor-pointer"
-                      onClick={() => setShowConfirmPassword((prev) => !prev)}
-                    />
-                  ) : (
-                    <EyeIcon
-                      className="cursor-pointer"
-                      onClick={() => setShowConfirmPassword((prev) => !prev)}
-                    />
-                  )}
-                </InputGroupAddon>
               </InputGroup>
             </Field>
 
@@ -111,7 +70,7 @@ export default function EditProfile() {
               variant={"default"}
               className="cursor-pointer bg-gray-800 text-white hover:bg-gray-900"
             >
-              Update Profile
+              Update Profile Picture
             </Button>
           </form>
         </div>
