@@ -31,11 +31,11 @@ const initialState = {
 
 export default function CreateArticleForm({ categories }: Props) {
   const [state, formAction] = useActionState(createPost, initialState);
-  const [categoryId, setCategoryId] = useState("");
-  const [imageKey, setImageKey] = useState("");
-  const [previewUrl, setPreviewUrl] = useState("");
-  const [uploading, setUploading] = useState(false);
-  const [content, setContent] = useState("");
+  const [categoryId, setCategoryId] = useState<string>("");
+  const [imageKey, setImageKey] = useState<string>("");
+  const [previewUrl, setPreviewUrl] = useState<string>("");
+  const [uploading, setUploading] = useState<boolean>(false);
+  const [content, setContent] = useState<string>("");
 
   async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
