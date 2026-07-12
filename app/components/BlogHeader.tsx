@@ -45,8 +45,6 @@ export function BlogHeader({
           <div className="flex items-center gap-2 text-muted-foreground">
             <CalendarDays size={16} /> {createdAt.toLocaleString()}
           </div>
-
-          <CommentModal />
         </div>
       </div>
 

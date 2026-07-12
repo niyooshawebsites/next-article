@@ -4,11 +4,11 @@ import Link from "next/link";
 export default function Home() {
   return (
     <div className="flex min-h-screen justify-center items-center">
-      <div className="w-6/12 bg-gray-100 p-5 rounded-lg space-y-3">
-        <h1 className="text-4xl text-blue-500 mb-10">
+      <div className="w-6/12 bg-blue-100 p-5 rounded-lg space-y-3">
+        <h1 className="text-4xl text-blue-600 mb-10">
           Welcome to Next Article
         </h1>
-        <h2 className="text-2xl">
+        <h2 className="text-2xl text-blue-500">
           Discover Stories That Inspire, Inform, and Empower
         </h2>
         <p>
@@ -28,7 +28,9 @@ export default function Home() {
         <h1 className="text-2xl my-5 text-red-500">OR</h1>
 
         <div className="space-y-3">
-          <h2 className="text-2xl">Share Your Knowledge with the Community</h2>
+          <h2 className="text-2xl text-blue-500">
+            Share Your Knowledge with the Community
+          </h2>
           <p>
             Have a story to tell or expertise to share? Create an account to
             publish your own articles, connect with readers, and contribute

@@ -1,7 +1,6 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { Comment } from "@/lib/generated/prisma/client";
 import { auth } from "@/lib/auth";
 
 interface ActionState {
@@ -92,7 +91,7 @@ export async function fetchAllComments(postId: string, page: number) {
       orderBy: {
         createdAt: "desc",
       },
-      skip: (1 - page) * pageSize,
+      skip: (page - 1) * pageSize,
       take: pageSize,
     });
 

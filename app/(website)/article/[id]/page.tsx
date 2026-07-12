@@ -9,15 +9,17 @@ import { fetchAllComments } from "@/app/actions/comment-action";
 interface Props {
   params: Promise<{
     id: string;
-    page: string;
+  }>;
+  searchParams: Promise<{
+    page?: string;
   }>;
 }
 
-export default async function page({ params }: Props) {
+export default async function page({ params, searchParams }: Props) {
   const { id } = await params;
-  const { page } = await params;
+  const { page } = await searchParams;
   const articleId = id;
-  const currentPage = Number(page) ?? 1;
+  const currentPage = Number(page ?? 1);
 
   if (!articleId) {
     return <div>No Article Id</div>;

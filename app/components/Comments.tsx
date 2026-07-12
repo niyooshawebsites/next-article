@@ -64,7 +64,11 @@ export default async function Comments({
                   <>
                     <ItemMedia variant="image">
                       <Image
-                        src={`${comment.author.image}`}
+                        src={
+                          comment.author.image
+                            ? `${comment.author.image}`
+                            : `/avatar.jpg`
+                        }
                         alt={comment.post.title}
                         width={32}
                         height={32}
