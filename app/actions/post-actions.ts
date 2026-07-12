@@ -571,6 +571,7 @@ export async function findArticle(postId: string) {
           select: {
             name: true,
             email: true,
+            image: true,
           },
         },
         category: {

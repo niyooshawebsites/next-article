@@ -7,7 +7,7 @@ interface Props {
   title: string;
   category: string;
   authorName: string;
-  authorEmail: string;
+  authorImg: string;
   imageUrl: string;
   createdAt: Date;
 }
@@ -16,7 +16,7 @@ export function BlogHeader({
   title,
   category,
   authorName,
-  authorEmail,
+  authorImg,
   imageUrl,
   createdAt,
 }: Props) {
@@ -31,13 +31,12 @@ export function BlogHeader({
       <div className="mt-8 flex items-center gap-6">
         <div className="flex items-center gap-3">
           <Avatar>
-            <AvatarImage src="avatar.jgg" />
-            <AvatarFallback>U</AvatarFallback>
+            <AvatarImage src={`${{ authorImg }}`} />
+            <AvatarFallback>{authorName[0].toUpperCase()}</AvatarFallback>
           </Avatar>
 
           <div>
             <p className="font-medium">{authorName}</p>
-            <p className="text-muted-foreground text-sm">{authorEmail}</p>
           </div>
 
           <div className="flex items-center gap-2 text-muted-foreground">

@@ -40,7 +40,6 @@ export default async function page({ params }: Props) {
         title={articleWithSignedUrl.title}
         category={articleWithSignedUrl.category!.name}
         authorName={articleWithSignedUrl.author.name}
-        authorEmail={articleWithSignedUrl.author.email}
         imageUrl={articleWithSignedUrl.imageUrl}
         createdAt={articleWithSignedUrl.createdAt}
       />
