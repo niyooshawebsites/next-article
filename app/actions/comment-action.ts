@@ -40,7 +40,7 @@ export async function createComment(
     });
 
     return {
-      success: false,
+      success: true,
       msg: "Comment added successfully",
     };
   } catch (err) {

@@ -5,6 +5,7 @@ import { getSignedImageUrl } from "@/app/actions/fetch-file-action";
 import CommentModal from "@/app/components/CommentModal";
 import Comments from "@/app/components/Comments";
 import { fetchAllComments } from "@/app/actions/comment-action";
+import { Metadata } from "next";
 
 interface Props {
   params: Promise<{
@@ -13,6 +14,50 @@ interface Props {
   searchParams: Promise<{
     page?: string;
   }>;
+}
+
+// attaching meta data for sharing purpose
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+
+  const res = await findArticle(id);
+  const article = res.data;
+
+  if (!article) {
+    return {
+      title: "Article not found",
+    };
+  }
+
+  const url = `${process.env.NEXT_PUBLIC_SITE_URL}/blog/${article.id}`;
+
+  return {
+    title: article.title,
+    description: article.content.slice(0, 160),
+
+    openGraph: {
+      title: article.title,
+      description: article.content.slice(0, 160),
+      url,
+      type: "article",
+      images: [
+        {
+          url: article.imageUrl,
+        },
+      ],
+    },
+
+    twitter: {
+      card: "summary_large_image",
+      title: article.title,
+      description: article.content.slice(0, 160),
+      images: [article.imageUrl],
+    },
+  };
 }
 
 export default async function page({ params, searchParams }: Props) {

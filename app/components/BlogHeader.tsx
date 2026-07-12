@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { CalendarDays } from "lucide-react";
 import CommentModal from "./CommentModal";
+import { Share } from "./Share";
 
 interface Props {
   title: string;
@@ -45,6 +46,8 @@ export function BlogHeader({
           <div className="flex items-center gap-2 text-muted-foreground">
             <CalendarDays size={16} /> {createdAt.toLocaleString()}
           </div>
+
+          <Share title={title} />
         </div>
       </div>
 

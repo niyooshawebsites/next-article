@@ -14,8 +14,9 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { createComment } from "../actions/comment-action";
-import { useActionState, useEffect } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const initialState = {
   success: false,
@@ -27,30 +28,37 @@ interface Props {
 }
 
 export default function CommentModal({ postId }: Props) {
+  const [open, setOpen] = useState(false);
   const createCommentWithPostId = createComment.bind(null, postId);
   const [state, formAction] = useActionState(
     createCommentWithPostId,
     initialState,
   );
+  const router = useRouter();
 
   useEffect(() => {
     if (!state.success) return;
 
     if (state.success) {
       toast.success(state.msg, { position: "top-center" });
+
+      queueMicrotask(() => {
+        setOpen(false);
+        router.refresh();
+      });
     } else {
       toast.error(state.msg, { position: "top-center" });
     }
   }, [state]);
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button
           variant="default"
           className="bg-blue-500 hover:bg-blue-600 cursor-pointer"
         >
-          Write Comment
+          Drop a Comment
         </Button>
       </DialogTrigger>
 
@@ -69,6 +77,7 @@ export default function CommentModal({ postId }: Props) {
                 id="content"
                 name="content"
                 placeholder="Write your comment here"
+                required
               />
             </Field>
           </FieldGroup>

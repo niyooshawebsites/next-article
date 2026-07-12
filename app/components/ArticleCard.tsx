@@ -32,7 +32,10 @@ export default function ArticleCard({
   const router = useRouter();
 
   return (
-    <Card className="relative mx-auto w-full max-w-sm pt-0 border-0 self-start">
+    <Card
+      className="relative mx-auto w-full max-w-sm pt-0 border-0 self-start cursor-pointer hover:scale-102 transition-all"
+      onClick={() => router.push(`/article/${id}`)}
+    >
       <img
         src={imageLink}
         alt="Event cover"

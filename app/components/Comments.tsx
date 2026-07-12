@@ -50,7 +50,10 @@ export default async function Comments({
       {comments.length > 0 ? (
         <Card>
           <CardHeader>
-            <CardTitle>Comments: </CardTitle>
+            <CardTitle className="font-bold text-gray-800">
+              Comments:{" "}
+              {comments.length < 10 ? `0${comments.length}` : comments.length}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <ItemGroup className="gap-4">
@@ -61,32 +64,39 @@ export default async function Comments({
                   role="listitem"
                   asChild
                 >
-                  <>
-                    <ItemMedia variant="image">
-                      <Image
-                        src={
-                          comment.author.image
-                            ? `${comment.author.image}`
-                            : `/avatar.jpg`
-                        }
-                        alt={comment.post.title}
-                        width={32}
-                        height={32}
-                        className="object-cover grayscale"
-                      />
-                    </ItemMedia>
-                    <ItemContent>
-                      <ItemTitle className="line-clamp-1">
-                        {comment.author.name}
-                      </ItemTitle>
-                      <ItemDescription>{comment.content}</ItemDescription>
-                    </ItemContent>
+                  <div className="flex justify-between">
+                    <div className="flex">
+                      {/* profile pic */}
+                      <ItemMedia variant="image">
+                        <Image
+                          src={
+                            comment.author.image
+                              ? `${comment.author.image}`
+                              : `/avatar.jpg`
+                          }
+                          alt={comment.post.title}
+                          width={32}
+                          height={32}
+                          className="object-cover grayscale"
+                        />
+                      </ItemMedia>
+
+                      {/* name and content */}
+                      <ItemContent>
+                        <ItemTitle className="font-bold text-gray-700">
+                          {comment.author.name}
+                        </ItemTitle>
+                        <ItemDescription>{comment.content}</ItemDescription>
+                      </ItemContent>
+                    </div>
+
+                    {/* time */}
                     <ItemContent className="flex-none text-center">
                       <ItemDescription>
-                        {comment.createdAt.toLocaleDateString().split("Z")[0]}
+                        {comment.createdAt.toLocaleString()}
                       </ItemDescription>
                     </ItemContent>
-                  </>
+                  </div>
                 </Item>
               ))}
             </ItemGroup>
