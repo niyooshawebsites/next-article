@@ -7,7 +7,7 @@ interface Props {
   title: string;
   category: string;
   authorName: string;
-  authorImg: string;
+  authorImg: string | null;
   imageUrl: string;
   createdAt: Date;
 }
