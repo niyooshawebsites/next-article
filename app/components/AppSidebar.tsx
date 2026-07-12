@@ -32,7 +32,7 @@ export default async function AppSidebar() {
             <SidebarMenuButton asChild>
               <Link href="/">
                 <Home />
-                <span>Home</span>
+                <span>Next Articles</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>

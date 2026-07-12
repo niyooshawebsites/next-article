@@ -16,7 +16,12 @@ export default function CommentModal() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="default">Write comment</Button>
+        <Button
+          variant="default"
+          className="bg-blue-500 hover:bg-blue-600 cursor-pointer"
+        >
+          Write Comment
+        </Button>
       </DialogTrigger>
 
       <DialogContent className="sm:max-w-sm">

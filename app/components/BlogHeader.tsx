@@ -2,6 +2,7 @@ import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { CalendarDays } from "lucide-react";
+import CommentModal from "./CommentModal";
 
 interface Props {
   title: string;
@@ -22,14 +23,16 @@ export function BlogHeader({
 }: Props) {
   return (
     <section>
-      <Badge className="mb-4 bg-blue-500">{category}</Badge>
+      <div className="mt-5 flex justify-between items-center gap-6">
+        <div>
+          <h1 className="text-5xl font-bold tracking-tight leading-tight">
+            {title}
+          </h1>
+        </div>
 
-      <h1 className="text-5xl font-bold tracking-tight leading-tight">
-        {title}
-      </h1>
-
-      <div className="mt-8 flex items-center gap-6">
         <div className="flex items-center gap-3">
+          <Badge className=" bg-blue-500">{category}</Badge>
+
           <Avatar>
             <AvatarImage src={`${{ authorImg }}`} />
             <AvatarFallback>{authorName[0].toUpperCase()}</AvatarFallback>
@@ -42,10 +45,12 @@ export function BlogHeader({
           <div className="flex items-center gap-2 text-muted-foreground">
             <CalendarDays size={16} /> {createdAt.toLocaleString()}
           </div>
+
+          <CommentModal />
         </div>
       </div>
 
-      <div className="relative mt-10 aspect-video overflow-hidden rounded-xl">
+      <div className="relative mt-5 aspect-video overflow-hidden rounded-xl">
         <Image src={imageUrl} alt={title} fill />
       </div>
     </section>
