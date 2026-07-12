@@ -1,4 +1,57 @@
+"use server";
+
 import prisma from "@/lib/prisma";
+import { Comment } from "@/lib/generated/prisma/client";
+import { auth } from "@/lib/auth";
+
+interface ActionState {
+  success: boolean;
+  msg: string;
+}
+
+export async function createComment(
+  postId: string,
+  prevState: ActionState,
+  formData: FormData,
+) {
+  const content = (formData.get("content") as string)?.trim();
+  const session = await auth();
+
+  if (!content) {
+    return {
+      success: false,
+      msg: "Please fill out the details",
+    };
+  }
+
+  if (!session) {
+    return {
+      success: false,
+      msg: "Please login to comment",
+    };
+  }
+
+  try {
+    await prisma.comment.create({
+      data: {
+        content,
+        postId,
+        authorId: session.user.id,
+      },
+    });
+
+    return {
+      success: false,
+      msg: "Comment added successfully",
+    };
+  } catch (err) {
+    console.log(err);
+    return {
+      success: false,
+      msg: "Failed to add comment",
+    };
+  }
+}
 
 // fetch all comments for website
 export async function fetchAllComments(postId: string, page: number) {

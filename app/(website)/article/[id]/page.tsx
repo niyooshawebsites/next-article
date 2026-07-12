@@ -4,7 +4,7 @@ import { findArticle } from "@/app/actions/post-actions";
 import { getSignedImageUrl } from "@/app/actions/fetch-file-action";
 import CommentModal from "@/app/components/CommentModal";
 import Comments from "@/app/components/Comments";
-import { fetchAllComments } from "@/app/actions/comment-actions";
+import { fetchAllComments } from "@/app/actions/comment-action";
 
 interface Props {
   params: Promise<{
@@ -54,7 +54,7 @@ export default async function page({ params }: Props) {
         content={articleWithSignedUrl.content}
         published={articleWithSignedUrl.published}
       />
-      <CommentModal />
+      <CommentModal postId={articleWithSignedUrl.id} />
       <Comments
         comments={comments}
         currentPage={currentPage}
