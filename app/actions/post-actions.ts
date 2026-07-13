@@ -1197,3 +1197,8 @@ export async function fetchPostsByCatetoryForWebsite(
     };
   }
 }
+
+// fetch posts by article search for website
+export async function fetchPostsBySearchTermForWebsite(){
+  
+}

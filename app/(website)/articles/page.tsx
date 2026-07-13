@@ -1,4 +1,7 @@
-import { fetchPusblishedPosts } from "@/app/actions/post-actions";
+import {
+  fetchPusblishedPosts,
+  fetchPostsBySearchTermForWebsite,
+} from "@/app/actions/post-actions";
 import ArticleCard from "@/app/components/ArticleCard";
 import { getSignedImageUrl } from "@/app/actions/fetch-file-action";
 import PaginationComp from "@/app/components/PaginationComp";
@@ -16,7 +19,13 @@ export default async function PublishedBlogs({ searchParams }: Props) {
   const page = Number(params.page) || 1;
   const article_details = params.article_details;
 
-  const res = await fetchPusblishedPosts({ page, pageSize: 10 });
+  let res;
+
+  if (article_details) {
+    res = await fetchPostsBySearchTermForWebsite();
+  }
+
+  res = await fetchPusblishedPosts({ page, pageSize: 10 });
   const totalPages = res.pagination!.totalPages;
   const posts = res.data;
 

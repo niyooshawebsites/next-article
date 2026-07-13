@@ -45,7 +45,7 @@ export default async function DashboardLayout({
                   </div>
                   <SidebarInset className="flex-1 p-3">
                     <div className="flex items-center space-x-2">
-                      <SidebarTrigger size={"lg"} />
+                      <SidebarTrigger className="text-3xl" />
                       <Header />
                     </div>
                     {children}

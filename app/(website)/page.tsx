@@ -3,8 +3,8 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen justify-center items-center">
-      <div className="w-6/12 bg-blue-100 p-5 rounded-lg space-y-3">
+    <div className="flex min-h-screen justify-center items-center px-3">
+      <div className="w-full md:w-5/12 bg-blue-100 p-5 rounded-lg space-y-3">
         <h1 className="text-4xl text-blue-600 mb-10">
           Welcome to Next Article
         </h1>
