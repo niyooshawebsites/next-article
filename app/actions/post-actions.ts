@@ -1198,14 +1198,9 @@ export async function fetchPostsByCatetoryForWebsite(
   }
 }
 
-interface fetchPostAction {
-  success: boolean;
-  msg: string;
-}
-
 // fetch posts by article search for website
 export async function fetchPostsBySearchTermForWebsite(
-  prevState: fetchPostAction,
+  prevState: ActionState | undefined,
   formData: FormData,
 ) {
   const article_details = (formData.get("article_details") as string).trim();

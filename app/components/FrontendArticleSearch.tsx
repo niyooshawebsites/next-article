@@ -20,19 +20,22 @@ const initialState = {
 };
 
 export function FrontendArticleSearch() {
-  const [state, formAction] = useActionState(fetchPostsBySearchTermForWebsite, initialState)
+  const [state, formAction] = useActionState(
+    fetchPostsBySearchTermForWebsite,
+    initialState,
+  );
   const [searchBy, setSearchBy] = useState<string>("");
 
   useEffect((): void => {
     /* eslint-disable react-hooks/set-state-in-effect */
-    if (!state.success) return;
+    if (!state?.success) return;
 
     if (state.success) {
       toast.success(state.msg, { position: "top-center" });
     } else {
       toast.error(state.msg, { position: "top-center" });
     }
-  }, [state, imageKey]);
+  }, [state]);
   /* eslint-enable react-hooks/set-state-in-effect */
 
   return (
