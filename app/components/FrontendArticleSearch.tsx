@@ -1,3 +1,6 @@
+"use client";
+
+import { useState, useEffect, useActionState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -8,10 +11,32 @@ import {
   SelectItem,
   SelectValue,
 } from "@/components/ui/select";
+import { fetchPostsBySearchTermForWebsite } from "../actions/post-actions";
+import { toast } from "sonner";
 
-export async function FrontendArticleSearch() {
+const initialState = {
+  success: false,
+  msg: "",
+};
+
+export function FrontendArticleSearch() {
+  const [state, formAction] = useActionState(fetchPostsBySearchTermForWebsite, initialState)
+  const [searchBy, setSearchBy] = useState<string>("");
+
+  useEffect((): void => {
+    /* eslint-disable react-hooks/set-state-in-effect */
+    if (!state.success) return;
+
+    if (state.success) {
+      toast.success(state.msg, { position: "top-center" });
+    } else {
+      toast.error(state.msg, { position: "top-center" });
+    }
+  }, [state, imageKey]);
+  /* eslint-enable react-hooks/set-state-in-effect */
+
   return (
-    <form action={"/articles"} className="flex gap-2">
+    <form action={formAction} className="flex gap-2">
       <Input
         type="text"
         placeholder="Search Articles"
@@ -19,7 +44,7 @@ export async function FrontendArticleSearch() {
         required
       />
 
-      <Select>
+      <Select onValueChange={setSearchBy} required>
         <SelectTrigger>
           <SelectValue placeholder="Search By" />
         </SelectTrigger>
@@ -30,6 +55,8 @@ export async function FrontendArticleSearch() {
           </SelectGroup>
         </SelectContent>
       </Select>
+
+      <input type="hidden" name="searchBy" value={searchBy} />
 
       <Button type="submit" variant="secondary">
         Search

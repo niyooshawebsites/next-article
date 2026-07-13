@@ -1198,7 +1198,23 @@ export async function fetchPostsByCatetoryForWebsite(
   }
 }
 
+interface fetchPostAction {
+  success: boolean;
+  msg: string;
+}
+
 // fetch posts by article search for website
-export async function fetchPostsBySearchTermForWebsite(){
-  
+export async function fetchPostsBySearchTermForWebsite(
+  prevState: fetchPostAction,
+  formData: FormData,
+) {
+  const article_details = (formData.get("article_details") as string).trim();
+  const searchBy = (formData.get("searchBy") as string).trim();
+
+  if (!article_details || !searchBy) {
+    return {
+      success: false,
+      msg: "Please fill out all the details",
+    };
+  }
 }
