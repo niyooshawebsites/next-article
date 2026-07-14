@@ -10,24 +10,30 @@ import { FrontendArticleSearch } from "@/app/components/FrontendArticleSearch";
 interface Props {
   searchParams: Promise<{
     page?: string;
-    article_details?: string;
+    q?: string;
+    by?: string;
   }>;
 }
 
 export default async function PublishedBlogs({ searchParams }: Props) {
   const params = await searchParams;
   const page = Number(params.page) || 1;
-  const article_details = params.article_details;
+  const article_details = params.q;
+  const searchBy = params.by;
 
   let res;
+  let posts;
+  let totalPages;
 
-  if (article_details) {
-    res = await fetchPostsBySearchTermForWebsite();
+  if (article_details || searchBy) {
+    res = await fetchPostsBySearchTermForWebsite(article_details);
+    totalPages = res.pagination!.totalPages;
+    posts = res.data;
+  } else {
+    res = await fetchPusblishedPosts({ page, pageSize: 10 });
+    totalPages = res.pagination!.totalPages;
+    posts = res.data;
   }
-
-  res = await fetchPusblishedPosts({ page, pageSize: 10 });
-  const totalPages = res.pagination!.totalPages;
-  const posts = res.data;
 
   // posts with aws image link
   const postsWithImages = await Promise.all(

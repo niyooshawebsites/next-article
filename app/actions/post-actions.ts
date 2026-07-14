@@ -4,6 +4,7 @@ import DOMPurify from "isomorphic-dompurify";
 import prisma from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
+import { Prisma } from "@/lib/generated/prisma/client";
 
 interface PaginationMeta {
   page: number;
@@ -1199,17 +1200,93 @@ export async function fetchPostsByCatetoryForWebsite(
 }
 
 // fetch posts by article search for website
-export async function fetchPostsBySearchTermForWebsite(
-  prevState: ActionState | undefined,
-  formData: FormData,
-) {
-  const article_details = (formData.get("article_details") as string).trim();
-  const searchBy = (formData.get("searchBy") as string).trim();
+export async function fetchPostsBySearchTermForWebsite({
+  searchParams,
+}: {
+  searchParams: Promise<{
+    q?: string;
+    by?: string;
+    page?: string;
+  }>;
+}) {
+  const params = await searchParams;
 
-  if (!article_details || !searchBy) {
+  const q = params.q ?? "";
+  const by = params.by ?? "post";
+  const page = Number(params.page ?? "1");
+  const pageSize = 10;
+
+  if (!q || !by) {
     return {
       success: false,
       msg: "Please fill out all the details",
+      data: [],
+      pagination: {
+        page,
+        pageSize,
+        totalPosts: 0,
+        totalPages: 1,
+      },
+    };
+  }
+
+  try {
+    const where: Prisma.PostWhereInput =
+      by === "post"
+        ? {
+            title: {
+              contains: q,
+              mode: "insensitive",
+            },
+          }
+        : {
+            author: {
+              name: {
+                contains: q,
+                mode: "insensitive",
+              },
+            },
+          };
+
+    const posts = await prisma.post.findMany({
+      where,
+      include: {
+        category: true,
+        author: true,
+        comments: true,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      skip: (page - 1) * pageSize,
+      take: pageSize,
+    });
+
+    const totalPosts = await prisma.post.count({ where });
+
+    return {
+      success: true,
+      msg: "Articles fetched successfully",
+      data: posts,
+      pagination: {
+        page,
+        pageSize,
+        totalPosts,
+        totalPages: Math.ceil(totalPosts / pageSize),
+      },
+    };
+  } catch (err) {
+    console.log(err);
+    return {
+      success: false,
+      msg: "Failed to fetch the articles",
+      data: [],
+      pagination: {
+        page,
+        pageSize,
+        totalPosts: 0,
+        totalPages: 1,
+      },
     };
   }
 }

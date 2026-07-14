@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useActionState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -11,38 +11,31 @@ import {
   SelectItem,
   SelectValue,
 } from "@/components/ui/select";
-import { fetchPostsBySearchTermForWebsite } from "../actions/post-actions";
-import { toast } from "sonner";
-
-const initialState = {
-  success: false,
-  msg: "",
-};
+import { useRouter } from "next/navigation";
 
 export function FrontendArticleSearch() {
-  const [state, formAction] = useActionState(
-    fetchPostsBySearchTermForWebsite,
-    initialState,
-  );
+  const [articleDetails, setArticleDetails] = useState<string>("");
   const [searchBy, setSearchBy] = useState<string>("");
+  const router = useRouter();
 
-  useEffect((): void => {
-    /* eslint-disable react-hooks/set-state-in-effect */
-    if (!state?.success) return;
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
 
-    if (state.success) {
-      toast.success(state.msg, { position: "top-center" });
-    } else {
-      toast.error(state.msg, { position: "top-center" });
-    }
-  }, [state]);
-  /* eslint-enable react-hooks/set-state-in-effect */
+    const params = new URLSearchParams({
+      q: articleDetails,
+      by: searchBy,
+      page: "1",
+    });
+
+    router.push(`/articles?${params.toString()}`);
+  }
 
   return (
-    <form action={formAction} className="flex gap-2">
+    <form onSubmit={handleSubmit} className="flex gap-2">
       <Input
         type="text"
         placeholder="Search Articles"
+        onChange={(e) => setArticleDetails(e.target.value)}
         name="article_details"
         required
       />
