@@ -1201,19 +1201,14 @@ export async function fetchPostsByCatetoryForWebsite(
 
 // fetch posts by article search for website
 export async function fetchPostsBySearchTermForWebsite({
-  searchParams,
+  q,
+  by,
+  page = 1,
 }: {
-  searchParams: Promise<{
-    q?: string;
-    by?: string;
-    page?: string;
-  }>;
+  q?: string;
+  by?: string;
+  page?: number;
 }) {
-  const params = await searchParams;
-
-  const q = params.q ?? "";
-  const by = params.by ?? "post";
-  const page = Number(params.page ?? "1");
   const pageSize = 10;
 
   if (!q || !by) {

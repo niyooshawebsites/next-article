@@ -44,7 +44,9 @@ export default function ArticleCard({
 
       <CardHeader className="">
         <CardAction>
-          <Badge variant={"secondary"}>{badge}</Badge>
+          <Badge variant={"secondary"} className="bg-blue-500 text-white">
+            {badge}
+          </Badge>
         </CardAction>
         <CardTitle>{title}</CardTitle>
       </CardHeader>
@@ -57,7 +59,7 @@ export default function ArticleCard({
       </CardDescription>
       <CardFooter>
         <Button
-          className="w-full bg-gray-800 text-white hover:bg-gray-900 cursor-pointer"
+          className="w-full bg-blue-500 text-white hover:bg-blue-600 cursor-pointer"
           variant={"secondary"}
           onClick={() => router.push(`/article/${id}`)}
         >

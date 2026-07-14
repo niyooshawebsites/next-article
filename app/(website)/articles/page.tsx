@@ -17,16 +17,20 @@ interface Props {
 
 export default async function PublishedBlogs({ searchParams }: Props) {
   const params = await searchParams;
-  const page = Number(params.page) || 1;
-  const article_details = params.q;
-  const searchBy = params.by;
+  const page = Number(params.page ?? 1);
+  const q = params.q;
+  const by = params.by;
 
   let res;
   let posts;
   let totalPages;
 
-  if (article_details || searchBy) {
-    res = await fetchPostsBySearchTermForWebsite(article_details);
+  if (q || by) {
+    res = await fetchPostsBySearchTermForWebsite({
+      q,
+      by,
+      page,
+    });
     totalPages = res.pagination!.totalPages;
     posts = res.data;
   } else {
