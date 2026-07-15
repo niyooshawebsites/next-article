@@ -41,6 +41,7 @@ export function FrontendArticleSearch() {
         <Input
           type="text"
           placeholder="Search Articles"
+          value={articleDetails}
           onChange={(e) => setArticleDetails(e.target.value)}
           name="q"
           required

@@ -1,9 +1,11 @@
+"use client";
+
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { CalendarDays } from "lucide-react";
-import CommentModal from "./CommentModal";
 import { Share } from "./Share";
+import { useRouter } from "next/navigation";
 
 interface Props {
   title: string;
@@ -22,6 +24,8 @@ export function BlogHeader({
   imageUrl,
   createdAt,
 }: Props) {
+  const router = useRouter();
+
   return (
     <section>
       <div className="mt-5 flex justify-between items-center gap-6">
@@ -32,15 +36,24 @@ export function BlogHeader({
         </div>
 
         <div className="flex items-center gap-3">
-          <Badge className=" bg-blue-500">{category}</Badge>
+          <Badge className=" bg-blue-500 hover:bg-blue-600 cursor-pointer">
+            {category}
+          </Badge>
 
-          <Avatar>
+          <Avatar className="cursor-pointer">
             <AvatarImage src={`${{ authorImg }}`} />
-            <AvatarFallback>{authorName[0].toUpperCase()}</AvatarFallback>
+            <AvatarFallback className="hover:text-blue-500">
+              {authorName[0].toUpperCase()}
+            </AvatarFallback>
           </Avatar>
 
-          <div>
-            <p className="font-medium">{authorName}</p>
+          <div
+            className="cursor-pointer hover:text-blue-500"
+            onClick={() =>
+              router.push(`/articles?q=${authorName}&by=user&page=1`)
+            }
+          >
+            <p className="font-medium ">{authorName}</p>
           </div>
 
           <div className="flex items-center gap-2 text-muted-foreground">

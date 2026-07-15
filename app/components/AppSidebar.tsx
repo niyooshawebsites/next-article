@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/sidebar";
 import { Home, SquareLibrary } from "lucide-react";
 import { fetchAllCategories } from "../actions/category-action";
+import Image from "next/image";
 
 const articlesByCategory = (id: string) => {
   const link = `/category/${id}`;
@@ -32,7 +33,7 @@ export default async function AppSidebar() {
             <SidebarMenuButton asChild>
               <Link href="/">
                 <Home />
-                <span>Next Articles</span>
+                <Image src="/logo.png" alt="logo" width="100" height="80" />
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>

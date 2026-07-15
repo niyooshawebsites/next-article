@@ -49,7 +49,7 @@ export default async function PublishedBlogs({ searchParams }: Props) {
 
   if (postsWithImages?.length == 0) {
     return (
-      <main className="flex min-h-screen">
+      <main className="flex min-h-screen p-5">
         <span>No posts yet...</span>
       </main>
     );

@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { UserCheck, UserPlus, LayoutDashboard } from "lucide-react";
 import { useSession } from "next-auth/react";
+import Image from "next/image";
 
 export default function Header() {
   const { data: session } = useSession();
@@ -32,7 +33,7 @@ export default function Header() {
       <div className="flex justify-center items-center">
         <Link href="/">
           <h1 className="yesteryear-regular text-4xl" style={{}}>
-            Next Articles
+            <Image src="/logo.png" alt="logo" width="150" height="80" />
           </h1>
         </Link>
       </div>
@@ -64,7 +65,7 @@ export default function Header() {
           <DropdownMenuTrigger asChild>
             <Button
               variant="secondary"
-              className="bg-gray-900 hover:bg-gray-950 text-white cursor-pointer"
+              className="bg-blue-500 hover:bg-blue-600 text-white cursor-pointer"
             >
               Account
             </Button>

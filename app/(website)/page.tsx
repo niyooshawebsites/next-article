@@ -4,11 +4,9 @@ import Image from "next/image";
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen justify-center items-center px-3">
-      <div className="w-full md:w-5/12 bg-blue-50 p-5 rounded-lg space-y-3">
-        <h1 className="text-4xl text-blue-600 mb-10">
-          Welcome to Next Article
-        </h1>
+    <div className="flex min-h-screen justify-center items-center px-3 relative">
+      <div className="w-full md:w-5/12 bg-blue-50 p-5 rounded-lg space-y-3 z-20 absolute right-60 bottom-28">
+        <h1 className="text-4xl text-blue-600 mb-10">Welcome Ghumakkads!</h1>
         <h2 className="text-2xl text-blue-500">
           Discover Stories That Inspire, Inform, and Empower
         </h2>
@@ -48,7 +46,10 @@ export default function Home() {
             </Link>
 
             <Link href="/register">
-              <Button variant={"outline"} className="cursor-pointer">
+              <Button
+                variant={"outline"}
+                className="cursor-pointer text-blue-500 hover:text-blue-600"
+              >
                 Get Started
               </Button>
             </Link>
@@ -56,11 +57,11 @@ export default function Home() {
         </div>
       </div>
       <Image
-        src="/travel.gif"
-        width={500}
+        src="/Ghumakkad.png"
+        width={700}
         height={500}
-        alt="travel"
-        className="border"
+        alt="Ghumakkads"
+        className=" absolute z-10 left-48 top-10 rounded-lg"
       />
     </div>
   );

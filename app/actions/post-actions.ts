@@ -147,117 +147,6 @@ export async function fetchAllPosts(
   }
 }
 
-// fetching all posts of a particular user
-export async function fetchAllPostsOfAUserForDashboard(
-  user_details: string,
-  page: number,
-  pageSize = 10,
-) {
-  const session = await auth();
-  const admin = session?.user.role === 1;
-
-  if (!admin) {
-    return {
-      success: false,
-      msg: "Unauthorized action",
-      data: [],
-      pagination: {
-        page: 1,
-        pageSize: 10,
-        totalPosts: 0,
-        totalPages: 1,
-      },
-    };
-  }
-
-  try {
-    const posts = await prisma.post.findMany({
-      include: {
-        category: {
-          select: {
-            id: true,
-            name: true,
-          },
-        },
-        author: {
-          select: {
-            id: true,
-            name: true,
-          },
-        },
-        comments: {
-          select: {
-            id: true,
-            content: true,
-            authorId: true,
-            postId: true,
-          },
-        },
-      },
-      where: {
-        author: {
-          name: {
-            equals: user_details,
-            mode: "insensitive",
-          },
-        },
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-      skip: (page - 1) * pageSize,
-      take: pageSize,
-    });
-
-    if (posts.length == 0) {
-      return {
-        success: true,
-        msg: "No post found",
-        data: [],
-        pagination: {
-          page: 1,
-          pageSize: 10,
-          totalPosts: 0,
-          totalPages: 1,
-        },
-      };
-    }
-
-    const totalPosts = await prisma.post.count({
-      where: {
-        author: {
-          name: user_details,
-        },
-      },
-    });
-
-    return {
-      success: true,
-      msg: "Articles fetched successfully",
-      data: posts,
-      pagination: {
-        page,
-        pageSize,
-        totalPosts,
-        totalPages: Math.ceil(totalPosts / pageSize),
-      },
-    };
-  } catch (err) {
-    console.log(err);
-    return {
-      success: false,
-      msg: "Failed to fetch Articles",
-      data: [],
-      pagination: {
-        page: 1,
-        pageSize: 10,
-        totalPosts: 0,
-        totalPages: 1,
-      },
-    };
-  }
-}
-
 // fetching published articles
 export async function fetchPusblishedPosts({ page = 1, pageSize = 10 }) {
   let totalPosts;
@@ -1279,6 +1168,122 @@ export async function fetchPostsBySearchTermForWebsite({
       pagination: {
         page,
         pageSize,
+        totalPosts: 0,
+        totalPages: 1,
+      },
+    };
+  }
+}
+
+// fetch all posts for a user for dashboard
+export async function fetchAllPublishedPostsOfAUserForWebsite(user_details:string, ) {
+
+}
+
+// fetching all posts of a particular user for dashboard
+export async function fetchAllPostsOfAUserForDashboard(
+  user_details: string,
+  page: number,
+  pageSize = 10,
+) {
+  const session = await auth();
+  const admin = session?.user.role === 1;
+
+  if (!admin) {
+    return {
+      success: false,
+      msg: "Unauthorized action",
+      data: [],
+      pagination: {
+        page: 1,
+        pageSize: 10,
+        totalPosts: 0,
+        totalPages: 1,
+      },
+    };
+  }
+
+  try {
+    const posts = await prisma.post.findMany({
+      include: {
+        category: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        author: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        comments: {
+          select: {
+            id: true,
+            content: true,
+            authorId: true,
+            postId: true,
+          },
+        },
+      },
+      where: {
+        author: {
+          name: {
+            equals: user_details,
+            mode: "insensitive",
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      skip: (page - 1) * pageSize,
+      take: pageSize,
+    });
+
+    if (posts.length == 0) {
+      return {
+        success: true,
+        msg: "No post found",
+        data: [],
+        pagination: {
+          page: 1,
+          pageSize: 10,
+          totalPosts: 0,
+          totalPages: 1,
+        },
+      };
+    }
+
+    const totalPosts = await prisma.post.count({
+      where: {
+        author: {
+          name: user_details,
+        },
+      },
+    });
+
+    return {
+      success: true,
+      msg: "Articles fetched successfully",
+      data: posts,
+      pagination: {
+        page,
+        pageSize,
+        totalPosts,
+        totalPages: Math.ceil(totalPosts / pageSize),
+      },
+    };
+  } catch (err) {
+    console.log(err);
+    return {
+      success: false,
+      msg: "Failed to fetch Articles",
+      data: [],
+      pagination: {
+        page: 1,
+        pageSize: 10,
         totalPosts: 0,
         totalPages: 1,
       },
