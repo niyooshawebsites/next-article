@@ -81,9 +81,21 @@ model Post {
   updatedAt DateTime @updatedAt
 
   comments Comment[]
+  images PostImage[]
 
   author User @relation(fields: [authorId], references: [id])
   category Category? @relation(fields: [categoryId], references: [id])
+}
+
+model PostImage{
+  id String @id @default(cuid())
+  imageUrl String
+  alt String?
+  order Int @default(0)
+  postId String
+
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
 }
 
 model Category {

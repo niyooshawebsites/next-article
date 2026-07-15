@@ -210,6 +210,9 @@ export async function createPost(prevState: ActionState, formData: FormData) {
   const categoryId = (formData.get("categoryId") as string)?.trim();
   const title = (formData.get("title") as string)?.trim();
   const imageUrl = (formData.get("imageUrl") as string)?.trim();
+  const galleryImages = JSON.parse(
+    (formData.get("galleryImages") as string) || "[]",
+  );
   const content = DOMPurify.sanitize(
     (formData.get("content") as string)?.trim(),
   );
@@ -237,6 +240,11 @@ export async function createPost(prevState: ActionState, formData: FormData) {
         content,
         imageUrl,
         authorId: session.user.id,
+        images: {
+          create: galleryImages.map((img: string) => ({
+            imageUrl: img,
+          })),
+        },
       },
     });
 
@@ -469,6 +477,7 @@ export async function findArticle(postId: string) {
             name: true,
           },
         },
+        images: true,
       },
     });
 
@@ -1176,9 +1185,9 @@ export async function fetchPostsBySearchTermForWebsite({
 }
 
 // fetch all posts for a user for dashboard
-export async function fetchAllPublishedPostsOfAUserForWebsite(user_details:string, ) {
-
-}
+export async function fetchAllPublishedPostsOfAUserForWebsite(
+  user_details: string,
+) {}
 
 // fetching all posts of a particular user for dashboard
 export async function fetchAllPostsOfAUserForDashboard(

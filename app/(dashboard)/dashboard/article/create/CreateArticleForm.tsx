@@ -33,19 +33,20 @@ export default function CreateArticleForm({ categories }: Props) {
   const [state, formAction] = useActionState(createPost, initialState);
   const [categoryId, setCategoryId] = useState<string>("");
   const [imageKey, setImageKey] = useState<string>("");
+  const [galleryKeys, setGalleryKeys] = useState<string[]>([]);
   const [previewUrl, setPreviewUrl] = useState<string>("");
+  const [galleryPreview, setGalleryPreview] = useState<string[]>([]);
   const [uploading, setUploading] = useState<boolean>(false);
   const [content, setContent] = useState<string>("");
 
   async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
-
     if (!file) return;
 
+    setUploading(true);
     setPreviewUrl(URL.createObjectURL(file));
 
     try {
-      setUploading(true);
       const res = await getPresignedUrl(file.name, file.type);
 
       await axios.put(res.uploadUrl, file, {
@@ -55,6 +56,41 @@ export default function CreateArticleForm({ categories }: Props) {
       });
 
       setImageKey(res.key);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setUploading(false);
+    }
+  }
+
+  async function handleGalleryUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(e.target.files || []);
+
+    if (files.length === 0) return;
+
+    setUploading(true);
+
+    try {
+      // Generate preview URLs immediately
+      const previews = files.map((file) => URL.createObjectURL(file));
+      setGalleryPreview((prev) => [...prev, ...previews]);
+
+      // Upload all files in parallel
+      const uploadedKeys = await Promise.all(
+        files.map(async (file) => {
+          const res = await getPresignedUrl(file.name, file.type);
+
+          await axios.put(res.uploadUrl, file, {
+            headers: {
+              "Content-Type": file.type,
+            },
+          });
+
+          return res.key;
+        }),
+      );
+
+      setGalleryKeys((prev) => [...prev, ...uploadedKeys]);
     } catch (err) {
       console.error(err);
     } finally {
@@ -114,7 +150,7 @@ export default function CreateArticleForm({ categories }: Props) {
           </Field>
 
           <Field>
-            <FieldLabel htmlFor="imageKey">Upload Image</FieldLabel>
+            <FieldLabel htmlFor="imageKey">Upload Cover Image</FieldLabel>
             <Input
               type="file"
               id="imageKey"
@@ -137,6 +173,52 @@ export default function CreateArticleForm({ categories }: Props) {
                 />
               </div>
             )}
+          </Field>
+
+          <Field>
+            <FieldLabel>Gallery Images</FieldLabel>
+            <Input
+              type="file"
+              multiple
+              accept="image/*"
+              onChange={handleGalleryUpload}
+            />
+
+            {/* Because HTML forms cannot directly send arrays nicely, create a hidden input. */}
+            <input
+              type="hidden"
+              name="galleryImages"
+              value={JSON.stringify(galleryKeys)}
+            />
+
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {galleryPreview.map((preview, index) => (
+                <div key={index} className="relative">
+                  <Image
+                    src={preview}
+                    alt=""
+                    width={300}
+                    height={200}
+                    className="rounded border object-cover"
+                  />
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setGalleryPreview((prev) =>
+                        prev.filter((_, i) => i !== index),
+                      );
+                      setGalleryKeys((prev) =>
+                        prev.filter((_, i) => i !== index),
+                      );
+                    }}
+                    className="absolute top-2 right-2 bg-red-600 text-white rounded-full w-6 h-6"
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+            </div>
           </Field>
 
           <Field>
