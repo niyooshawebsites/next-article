@@ -25,7 +25,7 @@ export function BlogStatus({ id, published }: Props) {
           togglePostStatus(id);
           router.push("/dashboard/articles");
         }}
-        className="cursor-pointer"
+        className="cursor-pointer bg-blue-500 text-white hover:bg-blue-600"
       >
         {published ? "Draft" : "Publish"}
       </Button>

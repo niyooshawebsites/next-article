@@ -24,16 +24,16 @@ export default function RegisterForm() {
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
   return (
-    <div className="flex justify-center items-center w-3/12 border border-gray-300 rounded-lg">
-      <div className="bg-gray-50 p-5 rounded-lg space-y-3 w-full">
+    <div className="flex justify-center items-center w-3/12 rounded-lg">
+      <div className="bg-blue-50 p-5 rounded-lg space-y-3 w-full">
         <h1 className="text-2xl">Register</h1>
         <Button
           type="button"
           variant={"secondary"}
-          className="w-full bg-gray-900 text-white hover:bg-gray-950 cursor-pointer"
+          className="w-full bg-blue-500 text-white hover:bg-blue-600 cursor-pointer"
           onClick={() => signIn("google")}
         >
-          Register with <span className="text-orange-500">Google</span>
+          Register with <span className="text-gray-900">Google</span>
         </Button>
 
         <hr className="text-gray-200" />
@@ -85,7 +85,11 @@ export default function RegisterForm() {
             <p className="text-red-500 text-sm">{state.msg}</p>
           )}
 
-          <Button type="submit" className="cursor-pointer" variant={"outline"}>
+          <Button
+            type="submit"
+            className="cursor-pointer text-blue-500 hover:text-blue-600"
+            variant={"outline"}
+          >
             Register
           </Button>
         </form>
@@ -93,7 +97,7 @@ export default function RegisterForm() {
         <p className="text-gray-500 text-sm">
           Aready havean account?{" "}
           <span className="text-blue-500">
-            <Link href="/login">Sign In</Link>
+            <Link href="/login">Login</Link>
           </span>
         </p>
       </div>

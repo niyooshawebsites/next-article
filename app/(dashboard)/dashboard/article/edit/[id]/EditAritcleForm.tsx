@@ -174,7 +174,7 @@ export default function EditAritcleForm({
           <Button
             type="submit"
             variant={"default"}
-            className="cursor-pointer bg-gray-800 text-white hover:bg-gray-900"
+            className="cursor-pointer bg-blue-500 text-white hover:bg-blue-600"
           >
             {uploading ? "Uploading..." : "Update"}
           </Button>

@@ -19,6 +19,7 @@ import {
   SelectGroup,
   SelectItem,
 } from "@/components/ui/select";
+import { useRouter } from "next/navigation";
 
 interface Props {
   categories: Category[];
@@ -38,6 +39,7 @@ export default function CreateArticleForm({ categories }: Props) {
   const [galleryPreview, setGalleryPreview] = useState<string[]>([]);
   const [uploading, setUploading] = useState<boolean>(false);
   const [content, setContent] = useState<string>("");
+  const router = useRouter();
 
   async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -105,6 +107,7 @@ export default function CreateArticleForm({ categories }: Props) {
     if (state.success) {
       setImageKey("");
       setPreviewUrl(""); // ✅ clear preview
+      router.push("/dashboard/articles");
     }
 
     if (state.success) {
@@ -231,7 +234,7 @@ export default function CreateArticleForm({ categories }: Props) {
             type="submit"
             variant="default"
             disabled={uploading || !imageKey}
-            className="cursor-pointer bg-gray-800 text-white hover:bg-gray-900"
+            className="cursor-pointer bg-blue-500 text-white hover:bg-blue-600"
           >
             {uploading ? "Uploading..." : "Create Article"}
           </Button>

@@ -4,6 +4,7 @@ import { BlogStatus } from "@/app/components/BlogStatus";
 import { findArticle } from "@/app/actions/post-actions";
 import { getSignedImageUrl } from "@/app/actions/fetch-file-action";
 import { auth } from "@/lib/auth";
+import { ImageGallery } from "@/app/components/ImageGallery";
 
 interface Props {
   params: Promise<{
@@ -32,6 +33,12 @@ export default async function page({ params }: Props) {
   const articleWithSignedUrl = {
     ...article,
     imageUrl: await getSignedImageUrl(article.imageUrl),
+    images: await Promise.all(
+      article.images.map(async (img) => ({
+        ...img,
+        imageUrl: await getSignedImageUrl(img.imageUrl),
+      })),
+    ),
   };
 
   return (
@@ -44,6 +51,7 @@ export default async function page({ params }: Props) {
         imageUrl={articleWithSignedUrl.imageUrl}
         createdAt={articleWithSignedUrl.createdAt}
       />
+      <ImageGallery images={articleWithSignedUrl.images} />
       <BlogContent
         id={articleWithSignedUrl.id}
         content={articleWithSignedUrl.content}

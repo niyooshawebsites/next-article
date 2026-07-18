@@ -61,7 +61,11 @@ export function FrontendArticleSearch() {
 
         <input type="hidden" name="searchBy" value={searchBy} />
 
-        <Button type="submit" variant="secondary">
+        <Button
+          type="submit"
+          variant="outline"
+          className="text-blue-500 hover:text-blue-600 cursor-pointer"
+        >
           Search
         </Button>
       </form>

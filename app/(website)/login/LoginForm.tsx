@@ -24,17 +24,17 @@ export default function LoginForm() {
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
   return (
-    <div className="flex justify-center items-center w-2/12 border border-gray-300 rounded-lg">
-      <div className=" bg-gray-50 rounded-lg p-5 space-y-4 w-full">
+    <div className="flex justify-center items-center w-3/12 rounded-lg">
+      <div className=" bg-blue-50 rounded-lg p-5 space-y-4 w-full">
         <h1 className="text-2xl">Login</h1>
 
         <Button
           type="button"
-          className="w-full bg-gray-900 hover:bg-gray-950 text-white cursor-pointer"
+          className="w-full bg-blue-500 hover:bg-blue-600 text-white cursor-pointer"
           variant={"secondary"}
           onClick={() => signIn()}
         >
-          Login with <span className="text-orange-500">Google</span>
+          Login with <span className="text-gray-900">Google</span>
         </Button>
 
         <hr className="text-gray-200" />
@@ -81,7 +81,11 @@ export default function LoginForm() {
             <p className="text-red-500 text-sm">{state.msg}</p>
           )}
 
-          <Button type="submit" variant={"outline"} className="cursor-pointer">
+          <Button
+            type="submit"
+            variant={"outline"}
+            className="cursor-pointer text-blue-500 hover:text-blue-600"
+          >
             Login
           </Button>
         </form>

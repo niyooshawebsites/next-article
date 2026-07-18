@@ -6,6 +6,7 @@ import CommentModal from "@/app/components/CommentModal";
 import Comments from "@/app/components/Comments";
 import { fetchAllComments } from "@/app/actions/comment-action";
 import { Metadata } from "next";
+import { ImageGallery } from "@/app/components/ImageGallery";
 
 interface Props {
   params: Promise<{
@@ -84,6 +85,12 @@ export default async function page({ params, searchParams }: Props) {
   const articleWithSignedUrl = {
     ...article,
     imageUrl: await getSignedImageUrl(article.imageUrl),
+    images: await Promise.all(
+      article.images.map(async (img) => ({
+        ...img,
+        imageUrl: await getSignedImageUrl(img.imageUrl),
+      })),
+    ),
   };
 
   return (
@@ -96,6 +103,7 @@ export default async function page({ params, searchParams }: Props) {
         imageUrl={articleWithSignedUrl.imageUrl}
         createdAt={articleWithSignedUrl.createdAt}
       />
+      <ImageGallery images={articleWithSignedUrl.images} />
       <BlogContent
         id={articleWithSignedUrl.id}
         content={articleWithSignedUrl.content}
